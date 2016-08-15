@@ -1,0 +1,154 @@
+body{
+	background-color: #f5f5f5
+}
+ul,li{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.app{
+	width: 600px;
+	margin: 0 auto;
+}
+.app-header, .app-footer{
+	text-align: center;
+	height: 150px;
+    color: rgba(175, 47, 47, 0.15);
+    font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 100px;
+    font-weight: 100;
+}
+.app-footer{
+    font-size: 25px;
+    height: auto;
+    margin: 100px;
+}
+.app-footer p{
+    font-size: 14px;
+}
+.app-main{
+	background-color: #fff;
+	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+}
+.app-input{
+	padding: 0 20px;
+    height: 60px;
+    line-height: 60px;
+    border-bottom: 1px solid #eff;
+}
+.app-input input{
+	border: none;
+    width: 100%;
+    height: 30px;
+    outline: none;
+
+    font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 100;
+}
+
+.app-input button{
+	display: none;
+}
+.app-items .app-items-ul li{
+	min-height: 40px;
+    line-height: 40px;
+    padding: 0 30px 0 10px;
+    color: #4d4d4d;
+    border-bottom: 1px solid #eff;
+    position: relative;
+}
+.app-label{
+	display: inline-block;
+	line-height: 18px;
+	padding: 10px 0;
+	// outline: none;
+	width:100%;
+	word-wrap: break-word;
+}
+.app-items .app-items-ul li:hover .app-del-icon, .app-items .app-items-ul li:hover .app-prev-icon{
+	display: block;
+}
+/*.app-items .app-items-ul li:hover {
+    padding: 0 45px 0 10px;
+}*/
+.app-prev-icon{
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: #cc9a9a;
+    cursor: move;
+    position: absolute;
+    right: 30px;
+    bottom: 22px;
+    display: none;
+    transition: color 0.2s ease-out;
+
+}
+
+.app-del-icon{
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    color: #cc9a9a;
+    cursor: pointer;
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+
+    display: none;
+    transition: color 0.2s ease-out;
+
+
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    color: #cc9a9a;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    bottom: 21px;
+    display: none; 
+    transition: color 0.2s ease-out;
+}
+.app-counter{
+    color: rgba(175, 47, 47, 0.15);
+    font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 100;
+    position: relative;
+    padding: 0 10px;
+    min-height: 30px;
+}
+
+.app-counter .counter{;
+	z-index: 1;
+	position: absolute;
+	left: 10px;
+    height: 30px;
+    line-height: 30px;
+}
+.app-counter .counter:hover{
+	color: green;
+}
+.app-counter .clear:hover{
+	color: red;
+	cursor: pointer;
+}
+.app-counter .clear{
+	z-index: 1;
+	position: absolute;
+    right: 10px;
+    height: 30px;
+    line-height: 30px;
+}
+.app-counter::before{
+	z-index: 0;
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 30px;
+    overflow: hidden;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 8px 0 -3px #f6f6f6, 0 9px 1px -3px rgba(0, 0, 0, 0.2), 0 16px 0 -6px #f6f6f6, 0 17px 2px -6px rgba(0, 0, 0, 0.2);
+}
