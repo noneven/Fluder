@@ -25,10 +25,11 @@ export default class Fluder {
          * @type {Object}
          */
         this._registers = {};
+        this._dispatchStoreIdStack = [];
         this.init();
     }
     init(){
-    	/**
+        /**
          * 中间件，集中处理action
          */
         this._middlewareQueue = new Queue(function(payload) {
@@ -91,6 +92,15 @@ export default class Fluder {
      */
     __dispatch__(storeId, payload) {
 
+        if(this._currentDispatchStoreId == storeId){
+            throw Error('action __invoke__ self!')
+        }
+        if(this._dispatchStoreIdStack.indexOf(storeId)!=-1){
+            throw Error('action __invoke__ to a circle!');
+        }
+
+        this._startDispatch(storeId);
+        
         let actionType = payload.type;
         if (!actionType) {
             throw new Error('action type does not exist in \n' + JSON.stringify(payload, null, 2));
@@ -102,6 +112,16 @@ export default class Fluder {
             storeId,
             payload
         });
+        this._endDispatch()
+    }
+
+    _startDispatch(storeId){
+        this._dispatchStoreIdStack||(this._dispatchStoreIdStack=[]);
+        this._currentDispatchStoreId = this._dispatchStoreIdStack.push(storeId);
+    }
+    _endDispatch(){
+        this._dispatchStoreIdStack.pop();
+        this._currentDispatchStoreId = undefined;
     }
 
     /**
@@ -165,8 +185,8 @@ export default class Fluder {
          */
         const CHANGE_EVENT = 'change';
         let store = Object.assign(method, EventEmitter.prototype, {
-            emitChange: function() {
-                this.emit(CHANGE_EVENT);
+            emitChange: function(result) {
+                this.emit(CHANGE_EVENT,result);
             },
             addChangeListener: function(callback) {
                 this.on(CHANGE_EVENT, callback);
@@ -185,7 +205,7 @@ export default class Fluder {
         return store;
     }
 
-  	/**
+    /**
      * 提供一个方法同时创建action和store，可以有效避免action和store的ID不统一的情况
      * @param  {object} actionCreators 创建action需要用到的action对象
      * @param  {object} method         创建store需要的store操作api
