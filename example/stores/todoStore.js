@@ -8,77 +8,81 @@ import constants from '../constants/constants';
  */
 var TODOID = constants.TODO_STORE_ID;
 /**
+ * store数据(states)存储
+ */ 
+let items = function(){
+    var TODOAPP = localStorage.getItem('TODOAPP');
+    return TODOAPP?JSON.parse(TODOAPP):[];
+}();
+
+let API = {
+    set: function(item){
+        items.push({text:item});
+        this.storage();
+    },
+    del: function(i){
+        items.splice(i,1);
+        this.storage();
+    },
+    delAll: function(){
+        items = [];
+        this.storage();
+    },
+    update: function(value,i){
+        items[i] = {text:value};
+        this.storage();
+    },
+    storage: function(){
+        localStorage.setItem('TODOAPP',JSON.stringify(items));
+    }
+};
+
+/**
  * 注意这里面的一些方法没有用arrow function
  * 原因是函数内部的this是动态绑定到store上面的
  */
 var todoStore = Flilia.storeCreate(TODOID, {
     /**
-     * store数据(states)存储
-     */
-    items: function(){
-        var TODOAPP = localStorage.getItem('TODOAPP');
-        return TODOAPP?JSON.parse(TODOAPP):[];
-    }(),
-    /**
      * STORE APIs
      */
     getAll: function(){
-        return this.items;
-    },
-    set: function(item){
-        this.items.push({text:item});
-		this.storage();
-    },
-    del: function(i){
-    	this.items.splice(i,1);
-		this.storage();
-    },
-    delAll: function(){
-    	this.items = [];
-		this.storage();
-    },
-    update: function(value,i){
-        this.items[i] = {text:value};
-        this.storage();
-    },
-	storage: function(){
-		localStorage.setItem('TODOAPP',JSON.stringify(this.items));
-	}
+        return items;
+    }
 }, {
     /**
      * STORE handlers
      */
     [`${TODOID}/${constants.GET_ALL}`]: function(){
-        return this.items;
+        return items;
     },
 
     [`${TODOID}/${constants.ADD_TODO}`]: function(payload){
-        this.set(payload.value);
-        return this.items;
+        API.set(payload.value);
+        return items;
     },
 
     [`${TODOID}/${constants.DEL_TODO}`]: function(payload){
-        this.del(payload.value);
-        return this.items;
+        API.del(payload.value);
+        return items;
     },
 
     [`${TODOID}/${constants.DEL_ALL}`]: function(){
-        this.delAll(); 
-        return this.items;
+        API.delAll(); 
+        return items;
     },
 
     [`${TODOID}/${constants.UPDATE_TODO}`]: function(payload){
-        this.update(payload.value,payload.extParam);
-        return this.items;
+        API.update(payload.value,payload.extParam);
+        return items;
     },
 
     [`${TODOID}/${constants.PREV_TODO}`]: function(payload){
         let i = payload.value;
-        let v1 = this.items[i].text;
-        let v2 = this.items[i-1].text;
-        this.update(v1, i-1);
-        this.update(v2, i);
-        return this.items;
+        let v1 = items[i].text;
+        let v2 = items[i-1].text;
+        API.update(v1, i-1);
+        API.update(v2, i);
+        return items;
     }
 });
 export default todoStore;
