@@ -2,7 +2,6 @@ import React from 'react';
 
 import todoStore from '../stores/todoStore';
 import todoAction from '../actions/todoAction';
-// import ACTION_TYPE_MAP from '../constants/constants';
 
 import Lines from './lines';
 
@@ -29,24 +28,13 @@ export default class TodoApp extends React.Component{
     }
     delAll(){
         todoAction.delAll();
-        // let delAllAction = actionCreator(ACTION_TYPE_MAP.DEL_ALL,{});
-        // dispatcher.dispatch(delAllAction);
     }
     addTodo(){
         let addTodoV = this.refs['app-val'].value;
-        // let addAction = actionCreator(ACTION_TYPE_MAP.ADD_TODO,{
-        //     value: addTodoV
-        // });
-        // addTodoV&&dispatcher.dispatch(addAction);
         todoAction.addTodo(addTodoV);
         this.refs['app-val'].value = '';
     }
     linesUpdateTodo(i,updateTodoV){
-    	// let updateAction = actionCreator(ACTION_TYPE_MAP.UPDATE_TODO,{
-     //        value: updateTodoV,
-     //        extParam: i
-     //    });
-     //    updateTodoV&&dispatcher.dispatch(updateAction);
         todoAction.updateTodo(updateTodoV,i)
     }
     render(){

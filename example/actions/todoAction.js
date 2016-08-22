@@ -1,8 +1,7 @@
-// import Flilia from '../..';
-import Flilia from '../dispatcher';
+import Fluder from '../dispatcher';
 import constants from '../constants/constants';
 const TODOID = constants.TODO_STORE_ID;
-export default Flilia.actionCreate(TODOID,{
+export default Fluder.actionCreate(TODOID,{
 	getAll:()=>({
 		type: `${TODOID}/${constants.GET_ALL}`,
 	}),

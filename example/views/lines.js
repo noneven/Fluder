@@ -1,6 +1,4 @@
 import React from 'react';
-// import {dispatcher, actionCreator,getActionType} from '../../src/index';
-// const ACTION_TYPE_MAP = getActionType();
 import todoAction from '../actions/todoAction';
 export default class Lines extends React.Component{
     constructor(props){
@@ -20,10 +18,6 @@ export default class Lines extends React.Component{
     	}
     }
     delTodo(i){
-        // let delAction = actionCreator(ACTION_TYPE_MAP.DEL_TODO,{
-        //     value: i
-        // });
-        // dispatcher.dispatch(delAction);
         todoAction.delTodo(i)
     }
     prevTodo(i){

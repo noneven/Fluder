@@ -1,7 +1,7 @@
 /**
  * STORE部分
  */
-import Flilia from '../dispatcher/';
+import Fluder from '../dispatcher/';
 import constants from '../constants/constants';
 /**
  * STORE唯一标示，和actionId一一对应
@@ -14,7 +14,9 @@ let items = function(){
     var TODOAPP = localStorage.getItem('TODOAPP');
     return TODOAPP?JSON.parse(TODOAPP):[];
 }();
-
+/**
+ * store不提供set操作，只能在handler里面做set
+ */ 
 let API = {
     set: function(item){
         items.push({text:item});
@@ -41,7 +43,7 @@ let API = {
  * 注意这里面的一些方法没有用arrow function
  * 原因是函数内部的this是动态绑定到store上面的
  */
-var todoStore = Flilia.storeCreate(TODOID, {
+var todoStore = Fluder.storeCreate(TODOID, {
     /**
      * STORE APIs
      */
