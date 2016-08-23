@@ -117,7 +117,8 @@ export default class Fluder {
 
     _startDispatch(storeId){
         this._dispatchStoreIdStack||(this._dispatchStoreIdStack=[]);
-        this._currentDispatchStoreId = this._dispatchStoreIdStack.push(storeId);
+        this._dispatchStoreIdStack.push(storeId);
+        this._currentDispatchStoreId = storeId;
     }
     _endDispatch(){
         this._dispatchStoreIdStack.pop();
