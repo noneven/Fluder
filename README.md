@@ -59,7 +59,7 @@ Fluder里面隐藏了Dispatcher，Action send Map到Store对应的handler后直�
 
 ---
 
-### Fluder Handles
+### Fluder Handlers
 
 当 **Action** 触发的时候，**Store** 需要一个与该 **Action** 对应的回调函数来处理 payload 数据，这时可以将数据写入到 **Store** 中。**ActionType** 需要与 **Store** 的回调函数名相对应。
 
