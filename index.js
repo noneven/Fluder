@@ -19,7 +19,7 @@ export default class Fluder {
          * actionStoreCreate时的默认id
          * @type {Number}
          */
-        this._storeId = 0;
+        this._storeId = this.unique();
         /**
          * store handler 注册Map
          * @type {Object}
@@ -28,6 +28,9 @@ export default class Fluder {
         this._dispatchStoreIdStack = [];
         this.init();
     }
+    /**
+     * 初始化
+     */
     init(){
         /**
          * 中间件，集中处理action
@@ -39,6 +42,12 @@ export default class Fluder {
             this.__invoke__(payload);
 
         }.bind(this), true);
+    }
+    /**
+     * 生成唯一ID
+     */
+    unique(){
+        return 'Fluder_Store_'+ Math.round(Math.random() * 100000)
     }
     /**
      * action对handler的调用(内部调用)
@@ -217,7 +226,7 @@ export default class Fluder {
      * @param  {string} storeId        action和store统一的唯一标识
      * @return {object}                返回一个action和store对象
      */
-    actionStoreCreate(actionCreators, method, handlers, storeId = this._storeId++) {
+    actionStoreCreate(actionCreators, method, handlers, storeId = this.unique()) {
         return {
             action: this.actionCreate(storeId, actionCreators),
             store: this.storeCreate(storeId, method, handlers)
