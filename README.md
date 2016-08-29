@@ -29,7 +29,7 @@ Dispatcher.actionCreate
 Dispatcher.actionStoreCreate
 ```
 
-## Fluder介绍
+## 介绍
 
 ### Fluder Store
 
@@ -82,18 +82,18 @@ Dispatcher.actionStoreCreate-Action和Store一起创建
 
 ```javascript
 Dispatcher.use(function(data, next){
-	let {storeId, payload} = data;
-	console.info(`actionType: \"${payload.type}\"`);
-	console.info(`storeId: \"${storeId}\"`);
+  let {storeId, payload} = data;
+  console.info(`actionType: \"${payload.type}\"`);
+  console.info(`storeId: \"${storeId}\"`);
     console.log(payload);
     next();
 }).use(function(data, next){
-	/**
-	 * 把action里面的异步处理统一放在中间件
-	 */
-	let {storeId, payload} = data;
-	
-	next();
+  /**
+   * 把action里面的异步处理统一放在中间件
+   */
+  let {storeId, payload} = data;
+  
+  next();
 })
 ```
 
@@ -187,22 +187,110 @@ import Fluder from '../dispatcher';
 import constants from '../constants/postConstants';
 const ERRORTIP_ID = 'ERRORTIP_ID';
 export default Fluder.actionCreate(ERRORTIP_ID,{
-	setErrData:(data)=>({
-		type: `${ERRORTIP_ID}/${constants.SET_ERR_DATA}`,
-		value: data
-	}),
+  setErrData:(data)=>({
+    type: `${ERRORTIP_ID}/${constants.SET_ERR_DATA}`,
+    value: data
+  }),
     delErrData:(data)=>({
-		type: `${ERRORTIP_ID}/${constants.DEL_ERR_DATA}`,
-		value: data
-	}),
-	initErrData:(data)=>({
-		type: `${ERRORTIP_ID}/${constants.INIT_ERR_DATA}`,
-		value: data
-	}),
+    type: `${ERRORTIP_ID}/${constants.DEL_ERR_DATA}`,
+    value: data
+  }),
+  initErrData:(data)=>({
+    type: `${ERRORTIP_ID}/${constants.INIT_ERR_DATA}`,
+    value: data
+  }),
     initErrIndex:(data)=>({
-		type: `${ERRORTIP_ID}/${constants.INIT_COMPONENT_INDEX}`,
-		value: data
-	}),
+    type: `${ERRORTIP_ID}/${constants.INIT_COMPONENT_INDEX}`,
+    value: data
+  }),
 });
 ```
+* actionStoreCreate例子
 
+```javascript
+import Fluder from '../dispatcher';
+import constants from '../constants/postConstants';
+const ERRORTIP_ID = 'ERRORTIP_ID';
+
+let dataTips = {};
+let dataTipsIndex = {};
+
+Fluder.actionStoreCreate(ERRORTIP_ID, {
+  setErrData:(data)=>({
+    type: `${ERRORTIP_ID}/${constants.SET_ERR_DATA}`,
+    value: data
+  }),
+    delErrData:(data)=>({
+    type: `${ERRORTIP_ID}/${constants.DEL_ERR_DATA}`,
+    value: data
+  }),
+  initErrData:(data)=>({
+    type: `${ERRORTIP_ID}/${constants.INIT_ERR_DATA}`,
+    value: data
+  }),
+    initErrIndex:(data)=>({
+    type: `${ERRORTIP_ID}/${constants.INIT_COMPONENT_INDEX}`,
+    value: data
+  }),
+}, {
+    /**
+     * store数据(states)存储
+     */
+    getTip: function(name){
+      return name?dataTips[name]:dataTips
+    },
+    getIndex: function(name){
+      return name?dataTipsIndex[name]:dataTipsIndex
+    },
+    getAll: function(){
+      return Object.keys(dataTips);
+    }
+}, {
+    /**
+     * STORE handlers
+     */
+    [`${ERRORTIP_ID}/${constants.INIT_ERR_DATA}`]: function(payload){
+      return set(payload,dataTips)
+    },
+    [`${ERRORTIP_ID}/${constants.INIT_COMPONENT_INDEX}`]: function(payload){
+      return set(payload,dataTipsIndex);
+    },
+    [`${ERRORTIP_ID}/${constants.DEL_ERR_DATA}`]: function(payload){
+      return del(payload, dataTips)
+    },
+    [`${ERRORTIP_ID}/${constants.SET_ERR_DATA}`]: function(payload){
+        return set(payload,dataTips)
+    }
+})
+
+function set(payload,dataTips){
+    let name = payload.value.actionTarget;
+    let val = payload.value.actionValue;
+    if (typeof val=="object") {
+      for(var k in val){
+        if(!val[k]&&val[k]!=0) {
+          delete dataTips[k];
+          continue;
+        }
+        dataTips[k] = val[k]
+      }
+    }else{
+      dataTips[name] = val
+    }
+    return dataTips
+}
+function del(payload,dataTips){
+    let name = payload.value.actionTarget;
+    if(!name) dataTips = {};
+    if(typeof name == 'string'){
+      delete dataTips[name];
+    }
+    if(Object.prototype.toString.call(name) == "[object Array]"){
+      for(let i of name){
+        delete dataTips[i];
+      }
+    }
+    return dataTips
+}
+
+```
