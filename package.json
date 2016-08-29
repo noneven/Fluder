@@ -4,7 +4,7 @@
   "description": "a unidirectional data flow tool based on flux",
   "main": "index.js",
   "directories": {
-    "test": "test"
+    "example": "example"
   },
   "dependencies": {
     "babel-core": "^6.13.2",
