@@ -37,7 +37,7 @@ export default class Fluder {
              * 中间件队列执行完后触发handler的调用
              */
             this.__invoke__(payload);
-            
+
         }.bind(this), true);
     }
     /**
@@ -59,28 +59,31 @@ export default class Fluder {
             store,
             handlers
         } = this._registers[storeId];
+
         /**
          * action payload
          * @type {object}
          */
         payload = payload.payload;
+
         /**
          * 在当前storeId的store Map到对应的handler
          * @type {function}
          */
         let handler = handlers[payload.type];
-        let result;
 
+        let result;
         if (typeof handler === 'function') {
+            // Invoke store handler
             /**
-             * result是数据的copy
+             * result是store数据的copy
              * view-controller里面对result的修改不会影响到store里的数据
              */
             result = handler.call(store, payload);
-            // Invoke store handler
-            if (result !== undefined) {
-                store.emitChange(result);
-            }
+            //可以没有返回值，只是set Store里面的值
+            // if (result !== undefined) {
+                store.emitChange(result, payload);
+            // }
         }
     }
 
@@ -100,7 +103,7 @@ export default class Fluder {
         }
 
         this._startDispatch(storeId);
-        
+
         let actionType = payload.type;
         if (!actionType) {
             throw new Error('action type does not exist in \n' + JSON.stringify(payload, null, 2));
@@ -117,7 +120,8 @@ export default class Fluder {
 
     _startDispatch(storeId){
         this._dispatchStoreIdStack||(this._dispatchStoreIdStack=[]);
-        this._currentDispatchStoreId = this._dispatchStoreIdStack.push(storeId);
+        this._dispatchStoreIdStack.push(storeId);
+        this._currentDispatchStoreId = storeId;
     }
     _endDispatch(){
         this._dispatchStoreIdStack.pop();
@@ -185,8 +189,8 @@ export default class Fluder {
          */
         const CHANGE_EVENT = 'change';
         let store = Object.assign(method, EventEmitter.prototype, {
-            emitChange: function(result) {
-                this.emit(CHANGE_EVENT,result);
+            emitChange: function(result,payload) {
+                this.emit(CHANGE_EVENT,result,payload);
             },
             addChangeListener: function(callback) {
                 this.on(CHANGE_EVENT, callback);
@@ -219,7 +223,7 @@ export default class Fluder {
             store: this.storeCreate(storeId, method, handlers)
         }
     }
-    
+
     /**
      * 中间件
      * @param  {function} middleware action统一流入中间件
