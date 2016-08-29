@@ -73,10 +73,15 @@ Fluder里面隐藏了Dispatcher，Action send Map到Store对应的handler后直�
 
 
 ## API
+
 Dispatcher.use-中间件
+
 Dispatcher.storeCreate-创建Store
+
 Dispatcher.actionCreate-创建Action
+
 Dispatcher.actionStoreCreate-Action和Store一起创建
+
 
 * use例子
 
