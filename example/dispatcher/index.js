@@ -1,14 +1,14 @@
 import Fluder from '../..';
 let dispatcher = new Fluder;
 let actionCount = 0
-export default dispatcher.use(function(data, next){
+export default dispatcher.applyMiddleware(function(data, next){
 	let {storeId, payload} = data;
 	console.info(`actionType: \"${payload.type}\"`);
 	console.info(`storeId: \"${storeId}\"`);
     console.log(payload);
     console.log(actionCount+++"------------------");
     next();
-}).use(function(data, next){
+}).applyMiddleware(function(data, next){
 	/**
 	 * 把action里面的异步处理统一放在中间件
 	 */

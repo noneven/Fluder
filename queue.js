@@ -1,48 +1,37 @@
+
 /**
  * Mini Queue Class
  * @param {Function} complete callback,
  * when queue is done, then invoke complete callback
  * @param {Boolean} whether execute workflow of loop
  */
-var Queue = function (completeCallback, loop) {
-    this._init();
-    this._initQueue.apply(this, arguments);
-};
+export default class Queue {
 
-Queue.prototype = {
-    _init: function(){
+    constructor(completeCallback, loop) {
         this.workflows = [];
-        this.completeQueue = [];
-    },
-    _initQueue: function(){
-        
-        var args = [].slice.call(arguments);
-        var loop = args.pop();
-        if(typeof loop=='boolean'){
-            loop&&(this._workflows = []);
-            this.completeQueue.push.apply(this.completeQueue, args);
-        }else{
-            this.completeQueue.push.apply(this.completeQueue, arguments);
+        this.completeCallback = completeCallback;
+
+        if (loop) {
+            this._workflows = [];
         }
-    },
+    }
     /**
      * Enter queue
      * @param {Function} workflow function
      */
-    enter: function () {
-        this.workflows.push.apply(this.workflows,arguments);
+    enter(workflow) {
+        this.workflows.push(workflow);
 
         // Backup workflow
         if (this._workflows) {
-            this._workflows.push.apply(this.workflows,arguments);
+            this._workflows.push(workflow);
         }
-    },
-
+    }
     /**
      * Execute workflow
      * @param {Object} workflow function data required
      */
-    execute: function (data, workflows) {
+    execute(data, workflows) {
         workflows = workflows || this.workflows.concat();
         var workflow;
 
@@ -56,10 +45,7 @@ Queue.prototype = {
             }
 
             workflows = null;
-            this.completeQueue.forEach(function(callback){
-                callback(data)
-            })
+            this.completeCallback(data);
         }
     }
-};
-export default Queue
+}

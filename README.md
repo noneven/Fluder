@@ -23,7 +23,7 @@ let Dispatcher = new Fluder();
 API
 
 ```
-Dispatcher.use
+Dispatcher.applyMiddleware
 Dispatcher.storeCreate
 Dispatcher.actionCreate
 Dispatcher.actionStoreCreate
@@ -74,7 +74,7 @@ Fluder里面隐藏了Dispatcher，Action send Map到Store对应的handler后直�
 
 ## API
 
-Dispatcher.use-中间件
+Dispatcher.applyMiddleware-中间件
 
 Dispatcher.storeCreate-创建Store
 
@@ -83,16 +83,16 @@ Dispatcher.actionCreate-创建Action
 Dispatcher.actionStoreCreate-Action和Store一起创建
 
 
-* use例子
+* applyMiddleware例子
 
 ```javascript
-Dispatcher.use(function(data, next){
+Dispatcher.applyMiddleware(function(data, next){
   let {storeId, payload} = data;
   console.info(`actionType: \"${payload.type}\"`);
   console.info(`storeId: \"${storeId}\"`);
   console.log(payload);
   next();
-}).use(function(data, next){
+}).applyMiddleware(function(data, next){
   /**
    * 把action里面的异步处理统一放在中间件
    */

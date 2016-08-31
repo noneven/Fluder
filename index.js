@@ -16,38 +16,37 @@ export default class Fluder {
      */
     constructor() {
         /**
-         * actionStoreCreate时的默认id
-         * @type {Number}
-         */
-        this._storeId = this.unique();
-        /**
          * store handler 注册Map
          * @type {Object}
          */
         this._registers = {};
-        this._dispatchStoreIdStack = [];
+        /**
+         * dispatch栈
+         * @type {Array}
+         */
+        this._dispatchStack = [];
+        /**
+         * 初始化
+         */
         this.init();
     }
-    /**
-     * 初始化
-     */
     init(){
         /**
-         * 中间件，集中处理action
+         * 中间件，集中处理action payload和storeId
          */
-        this._middlewareQueue = new Queue(function(payload) {
+        this._middlewareQueue = new Queue((payload)=>{
             /**
-             * 中间件队列执行完后触发handler的调用
+             * 中间件队列执行完后触发Store handler的调用
              */
             this.__invoke__(payload);
 
-        }.bind(this), true);
+        }, true);
     }
     /**
-     * 生成唯一ID
-     */
+    * Fluder Store唯一ID
+    */
     unique(){
-        return 'Fluder_Store_'+ Math.round(Math.random() * 100000)
+       return 'Fluder_Store_'+ Math.round(Math.random() * 100000)
     }
     /**
      * action对handler的调用(内部调用)
@@ -59,15 +58,12 @@ export default class Fluder {
          * storeId: 用于map到register里面注册的handler
          * @type {string}
          */
-        let storeId = payload.storeId;
+        let {storeId} = payload;
         /**
          * store和它对应的handler
          * @type {object}
          */
-        let {
-            store,
-            handlers
-        } = this._registers[storeId];
+        let {store, handlers} = this._registers[storeId];
 
         /**
          * action payload
@@ -81,15 +77,17 @@ export default class Fluder {
          */
         let handler = handlers[payload.type];
 
-        let result;
         if (typeof handler === 'function') {
             // Invoke store handler
             /**
              * result是store数据的copy
              * view-controller里面对result的修改不会影响到store里的数据
              */
-            result = handler.call(store, payload);
-            //可以没有返回值，只是set Store里面的值
+            let result = handler.call(store, payload);
+            /**
+             * 可以没有返回值，只是set Store里面的值
+             * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
+             */
             // if (result !== undefined) {
                 store.emitChange(result, payload);
             // }
@@ -103,18 +101,26 @@ export default class Fluder {
      * @return {void}           无返回值
      */
     __dispatch__(storeId, payload) {
-
-        if(this._currentDispatchStoreId == storeId){
+        /**
+         * 在当前Action触发的Store handler回调函数中再次发起了当前Action，这样会造成A-A循环调用,出现栈溢出
+         */
+        if(this._currentDispatch == storeId){
             throw Error('action __invoke__ self!')
         }
-        if(this._dispatchStoreIdStack.indexOf(storeId)!=-1){
+        /**
+         * 在当前Action触发的Store handler回调函数中再次触发了当前Action栈中的Action，出现A-B-C-A式循环调用，也会出现栈溢出
+         */
+        if(this._dispatchStack.indexOf(storeId)!=-1){
             throw Error('action __invoke__ to a circle!');
         }
-
+        /**
+         * 更新Action栈以及记录当前ActionID
+         */
         this._startDispatch(storeId);
-
-        let actionType = payload.type;
-        if (!actionType) {
+        /**
+         * Action的触发必须有ActionType，原因是ActionType和Store handlers Map的key一一对应
+         */
+        if (!payload.type) {
             throw new Error('action type does not exist in \n' + JSON.stringify(payload, null, 2));
         }
         /**
@@ -124,19 +130,26 @@ export default class Fluder {
             storeId,
             payload
         });
+        /**
+         * Action执行完更新Action栈以及删除当前ActionID
+         */
         this._endDispatch()
     }
-
+    /**
+     * 更新Action栈以及记录当前ActionID
+     */
     _startDispatch(storeId){
-        this._dispatchStoreIdStack||(this._dispatchStoreIdStack=[]);
-        this._dispatchStoreIdStack.push(storeId);
-        this._currentDispatchStoreId = storeId;
+        this._dispatchStack||(this._dispatchStack=[]);
+        this._dispatchStack.push(storeId);
+        this._currentDispatch = storeId;
     }
+    /**
+     * Action执行完更新Action栈以及删除当前ActionID
+     */
     _endDispatch(){
-        this._dispatchStoreIdStack.pop();
-        this._currentDispatchStoreId = undefined;
+        this._dispatchStack.pop();
+        this._currentDispatch = null;
     }
-
     /**
      * 创建action
      * @param  {string} storeId  该action作用于那个store,和store的storeId一一对应
@@ -158,23 +171,21 @@ export default class Fluder {
         let creator;
         let actions = {};
         /**
-         * 遍历创建
+         * 遍历创建Action
          */
         for (let name in actionCreators) {
             creator = actionCreators[name];
             /**
              * 创建闭包，让creator不被回收
              */
-            actions[name] = (function(storeId, creator) {
+            actions[name] = function(storeId, creator) {
                 return function() {
                     /**
                      * action里面发出改变store消息
                      */
-                    this.__dispatch__(storeId, creator(...arguments));
-
+                    return this.__dispatch__(storeId, creator(...arguments));
                 }.bind(this);
-
-            }.bind(this))(storeId, creator);
+            }.call(this, storeId, creator);
         }
         return actions;
     }
@@ -193,11 +204,16 @@ export default class Fluder {
         if (typeof storeId == 'undefined') {
             throw Error('id is reauired as create a store, and the id is the same of store!');
         }
-        /**
-         * 创建store
-         */
         const CHANGE_EVENT = 'change';
+        /**
+        * 创建store，继承EventEmitter
+        */
         let store = Object.assign(method, EventEmitter.prototype, {
+            /**
+             * 统一Store的EventEmitter调用方式，避免和全局EventEmitter混淆
+             * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
+             * 这里的局部优化是指全局Stores更新，触发的Store Handler较多，可以通过payload的数据过滤
+             */
             emitChange: function(result,payload) {
                 this.emit(CHANGE_EVENT,result,payload);
             },
@@ -206,15 +222,15 @@ export default class Fluder {
             },
             removeChangeListener: function(callback) {
                 this.removeListener(CHANGE_EVENT, callback);
+            },
+            removeAllChangeListener: function(){
+                this.removeAllListener()
             }
         });
         /**
          * 注册到register MAP里面
          */
-        this._registers[storeId] = {
-            store,
-            handlers
-        };
+        this._registers[storeId] = {store, handlers};
         return store;
     }
 
@@ -236,10 +252,9 @@ export default class Fluder {
     /**
      * 中间件
      * @param  {function} middleware action统一流入中间件
-     *
      * 这里和redux类似，和express等框架对请求的处理一样
      */
-    use(middleware) {
+    applyMiddleware(middleware) {
         if (typeof middleware === 'function') {
             /**
              * 中间件是一个队列，一个action发出时
@@ -250,9 +265,12 @@ export default class Fluder {
         }
         if(({}).toString.call(middleware)==='[object Array]'){
             for (let i = 0; i < middleware.length; i++) {
-                this.use(middleware[i])
+                if (typeof middleware === 'function') {
+                    this.applyMiddleware(middleware[i])
+                }
             }
         }
+        //支持链式中间件
         return this;
     }
 }
