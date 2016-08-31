@@ -96,16 +96,18 @@ export default class Fluder {
         if (typeof handler === 'function') {
             // Invoke store handler
             /**
-             * result是store数据的copy
+             * TODO
+             * result应该为store数据的copy，暂时没做深度copy，后续把Store改写成Immutable数据结构
              * view-controller里面对result的修改不会影响到store里的数据
              */
-            let result = handler.call(store, payload);
+            let result;
+            let _result = handler.call(store, payload)
             /**
              * 可以没有返回值，只是set Store里面的值
              * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
              */
             // if (result !== undefined) {
-            store.emitChange(result, payload);
+            store.emitChange(payload, result);
             // }
         }
     }
@@ -121,13 +123,13 @@ export default class Fluder {
          * 在当前Action触发的Store handler回调函数中再次发起了当前Action，这样会造成A-A循环调用,出现栈溢出
          */
         if (this._currentDispatch == storeId) {
-            throw Error('action __invoke__ self!')
+            throw Error('action '+(payload.value&&payload.value.actionType)+' __invoke__ myself!')
         }
         /**
          * 在当前Action触发的Store handler回调函数中再次触发了当前Action栈中的Action，出现A-B-C-A式循环调用，也会出现栈溢出
          */
         if (this._dispatchStack.indexOf(storeId) != -1) {
-            throw Error('action __invoke__ to a circle!');
+            throw Error(this._dispatchStack.join(' -> ') + storeId + ' : action __invoke__ to a circle!');
         }
         /**
          * 更新Action栈以及记录当前ActionID
@@ -179,12 +181,12 @@ export default class Fluder {
         /**
          * 不存在storeId
          */
-        if (typeof storeId == 'undefined') throw Error('id is reauired as create a action!');
+        if (typeof storeId == 'undefined') throw Error('id is reauired as creating a action!');
         /**
          * action handler为空,相当于没有action
          */
         if (!actionCreators || Object.keys(actionCreators).length == 0) {
-            console.warn('action handler\'s length is 0, need you a action handler?');
+            console.warn('action handler\'s length is 0, need you have a action handler?');
         }
 
         let creator, actions = {};
@@ -232,8 +234,8 @@ export default class Fluder {
              * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
              * 这里的局部优化是指全局Stores更新，触发的Store Handler较多，可以通过payload的数据过滤
              */
-            emitChange: function(result, payload) {
-                this.emit(CHANGE_EVENT, result, payload);
+            emitChange: function(payload, result) {
+                this.emit(CHANGE_EVENT, payload, result);
             },
             addChangeListener: function(callback) {
                 this.on(CHANGE_EVENT, callback);
