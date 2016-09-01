@@ -1,5 +1,11 @@
 /**
- * Fluder-A unidirectional data flow tool based on flux.
+ * Fluder 0.1.0
+ * A unidirectional data flow tool based on flux.
+ *
+ * url: https://github.com/coderwin/Fluder
+ * author: chenjiancj2011@outlook.com
+ * weibo: imChenJian
+ * date: 2016-08-10
  */
 
 /**

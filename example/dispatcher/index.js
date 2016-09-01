@@ -1,4 +1,4 @@
-import Fluder from '../..';
+import Fluder from '../../fluder';
 let dispatcher = new Fluder;
 let actionCount = 0
 export default dispatcher.applyMiddleware(function(data, next){
