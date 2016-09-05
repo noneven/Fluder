@@ -1,8 +1,9 @@
 /**
  * STORE部分
  */
-import Fluder from '../dispatcher/';
+import {storeCreate} from '../..'
 import constants from '../constants/constants';
+
 /**
  * STORE唯一标示，和actionId一一对应
  */
@@ -43,7 +44,7 @@ let API = {
  * 注意这里面的一些方法没有用arrow function
  * 原因是函数内部的this是动态绑定到store上面的
  */
-var todoStore = Fluder.storeCreate(TODOID, {
+var todoStore = storeCreate(TODOID, {
     /**
      * STORE APIs
      */

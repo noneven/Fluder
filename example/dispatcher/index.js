@@ -1,12 +1,10 @@
-import Fluder from '../../fluder';
-let dispatcher = new Fluder;
-let actionCount = 0
-export default dispatcher.applyMiddleware(function(data, next){
+import {applyMiddleware} from '../..';
+
+export default applyMiddleware(function(data, next){
 	let {storeId, payload} = data;
 	console.info(`actionType: \"${payload.type}\"`);
 	console.info(`storeId: \"${storeId}\"`);
     console.log(payload);
-    console.log(actionCount+++"------------------");
     next();
 }).applyMiddleware(function(data, next){
 	/**

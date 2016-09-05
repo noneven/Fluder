@@ -1,7 +1,8 @@
-import Fluder from '../dispatcher';
+import {actionCreate} from '../..';
+
 import constants from '../constants/constants';
 const TODOID = constants.TODO_STORE_ID;
-export default Fluder.actionCreate(TODOID,{
+export default actionCreate(TODOID,{
 	getAll:()=>({
 		type: `${TODOID}/${constants.GET_ALL}`,
 	}),

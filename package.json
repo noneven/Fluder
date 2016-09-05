@@ -2,7 +2,7 @@
   "name": "fluder",
   "version": "0.0.1",
   "description": "a unidirectional data flow tool based on flux",
-  "main": "fluder.js",
+  "main": "index.js",
   "directories": {
     "example": "example"
   },
