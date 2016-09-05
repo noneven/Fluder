@@ -31,8 +31,8 @@ export default function actionCreate(storeId, actionCreators) {
                 /**
                  * action里面发出改变store消息
                  */
-                return Fluder.dispatch(storeId, creator(...arguments));
-            }.bind(Fluder);
+                return this.dispatch(storeId, creator(...arguments));
+            }.bind(this);
         }.call(Fluder, storeId, creator);
     }
     return actions;
