@@ -24,6 +24,6 @@ export default function applyMiddleware(middleware) {
     }
     //支持链式中间件
     return {
-    	applyMiddleware: applyMiddleware
+    	applyMiddleware
     }
 }
