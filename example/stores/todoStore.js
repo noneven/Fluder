@@ -1,7 +1,7 @@
 /**
  * STORE部分
  */
-import {storeCreate} from '../..'
+import {storeCreate} from '../../src'
 import constants from '../constants/constants';
 
 /**

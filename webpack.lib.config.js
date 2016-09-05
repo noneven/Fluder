@@ -1,15 +1,17 @@
 
 var webpack = require('webpack');
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
     devtool: 'source-map',
     entry: {
-        "index": "./example/index.js",
+        "index": "./src/index.js",
     },
     output: {
-        path: __dirname + "/build/js",
-        filename: "[name].bundle.js",
+        path: __dirname + "/build/lib",
+	    filename: 'fluder.js',
+	    library: 'Fluder',
+	    libraryTarget: 'umd',
+	    umdNamedDefine: true
     },
     module: {
         loaders: [{

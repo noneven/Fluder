@@ -1,4 +1,4 @@
-import {applyMiddleware} from '../..';
+import {applyMiddleware} from '../../src';
 
 export default applyMiddleware(function(data, next){
 	let {storeId, payload} = data;
