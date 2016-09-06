@@ -1,7 +1,9 @@
 # Fluder
 A unidirectional data flow tool based on flux.
+
 更加轻量，更加便捷，更加高效。
-![Fluder]("./Fluder.png")
+
+![Fluder](./Fluder.png)
 
 ## 安装
 
