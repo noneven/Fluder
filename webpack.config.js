@@ -1,6 +1,5 @@
 
 var webpack = require('webpack');
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
     devtool: 'source-map',
@@ -20,7 +19,7 @@ module.exports = {
             }
         },{test: /\.css$/, loader: 'style-loader!css-loader'}]
     },resolve: {
-        extensions: ['', '.js', '.jsx', '.md', '.txt']
+        extensions: ['', '.js', '.jsx']
     },plugins: [
         //压缩
         new webpack.optimize.UglifyJsPlugin({
