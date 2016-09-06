@@ -20,9 +20,9 @@ module.exports = {
             query: {
                 presets: [ 'es2015', 'react' ]
             }
-        },{test: /\.css$/, loader: 'style-loader!css-loader'}]
+        }]
     },resolve: {
-        extensions: ['', '.js', '.jsx', '.md', '.txt']
+        extensions: ['', '.js', '.jsx']
     },plugins: [
         //压缩
         new webpack.optimize.UglifyJsPlugin({
