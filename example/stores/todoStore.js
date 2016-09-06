@@ -2,6 +2,10 @@
  * STORE部分
  */
 import {storeCreate} from '../../src'
+/**
+ * 启用中间件
+ */
+import applyMiddleware from '../dispatcher'
 import constants from '../constants/constants';
 
 /**
