@@ -12,21 +12,25 @@ A unidirectional data flow tool based on flux.
 npm install fluder
 ```
 
-初始化
+调用
 
 ```javascript
-let Fluder = require('fluder');
-//or import Fluder from 'fluder';
-let Dispatcher = new Fluder();
+import {
+  storeCreate,
+  actionCreate,
+  applyMiddleware,
+  actionStoreCreate
+} from 'fluder';
+
 ```
 
 API
 
 ```
-Dispatcher.applyMiddleware
-Dispatcher.storeCreate
-Dispatcher.actionCreate
-Dispatcher.actionStoreCreate
+Fluder.storeCreate
+Fluder.actionCreate
+Fluder.applyMiddleware
+Fluder.actionStoreCreate
 ```
 
 ## 介绍
@@ -83,10 +87,11 @@ Dispatcher.actionCreate-创建Action
 Dispatcher.actionStoreCreate-Action和Store一起创建
 
 
-* applyMiddleware例子
+* use例子
 
 ```javascript
-Dispatcher.applyMiddleware(function(data, next){
+import { applyMiddleware } from 'fluder';
+applyMiddleware(function(data, next){
   let {storeId, payload} = data;
   console.info(`actionType: \"${payload.type}\"`);
   console.info(`storeId: \"${storeId}\"`);
@@ -109,7 +114,7 @@ Dispatcher.applyMiddleware(function(data, next){
 /**
  * STORE部分
  */
-import Fluder from '../dispatcher';
+import { storeCreate } from 'fluder';
 import constants from '../constants/postConstants';
 /**
  * STORE唯一标示，和actionId一一对应
@@ -121,7 +126,7 @@ var ERRORTIP_ID = 'ERRORTIP_ID';
  */
 let dataTips = {};
 let dataTipsIndex = {};
-var ErrtipStore = Fluder.storeCreate(ERRORTIP_ID, {
+var ErrtipStore = storeCreate(ERRORTIP_ID, {
   /**
    * store数据(states)存储
    */
@@ -188,10 +193,10 @@ export default ErrtipStore;
 * Action例子
 
 ```javascript
-import Fluder from '../dispatcher';
+import { actionCreate } from 'fluder';
 import constants from '../constants/postConstants';
 const ERRORTIP_ID = 'ERRORTIP_ID';
-export default Fluder.actionCreate(ERRORTIP_ID,{
+export default actionCreate(ERRORTIP_ID,{
   setErrData:(data)=>({
     type: `${ERRORTIP_ID}/${constants.SET_ERR_DATA}`,
     value: data
@@ -213,14 +218,15 @@ export default Fluder.actionCreate(ERRORTIP_ID,{
 * actionStoreCreate例子
 
 ```javascript
-import Fluder from '../dispatcher';
+import { actionStoreCreate } from 'fluder';
+
 import constants from '../constants/postConstants';
 const ERRORTIP_ID = 'ERRORTIP_ID';
 
 let dataTips = {};
 let dataTipsIndex = {};
 
-Fluder.actionStoreCreate(ERRORTIP_ID, {
+export default actionStoreCreate(ERRORTIP_ID, {
   setErrData:(data)=>({
     type: `${ERRORTIP_ID}/${constants.SET_ERR_DATA}`,
     value: data
