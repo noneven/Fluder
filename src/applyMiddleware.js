@@ -13,7 +13,7 @@ export default function applyMiddleware(middleware) {
          * 需要排队等到所有的中间件 完成才会触发对应的handler
          * @param  {function} middleware
          */
-        Fluder.enter(middleware);
+        Fluder.enqueue(middleware);
     }
     if (({}).toString.call(middleware) === '[object Array]') {
         for (let i = 0; i < middleware.length; i++) {
