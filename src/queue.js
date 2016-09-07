@@ -1,51 +1,83 @@
 
 /**
- * Mini Queue Class
- * @param {Function} complete callback,
- * when queue is done, then invoke complete callback
- * @param {Boolean} whether execute workflow of loop
+ * 队列
+ * @type {Array}
+ */
+let queue = []
+
+/**
+ * 队列备份
+ * @type {Array}
+ */
+let _queue = []
+
+/**
+ * 队列类
  */
 export default class Queue {
 
-    constructor(completeCallback, loop) {
-        this.workflows = [];
-        this.completeCallback = completeCallback;
-
-        if (loop) {
-            this._workflows = [];
-        }
-    }
     /**
-     * Enter queue
-     * @param {Function} workflow function
+     * 构造函数
+     * @param {Boolean} 是否循环执行队列
      */
-    enter(workflow) {
-        this.workflows.push(workflow);
-
-        // Backup workflow
-        if (this._workflows) {
-            this._workflows.push(workflow);
-        }
+    constructor(loop=true) {
+        this.loop = loop;
     }
-    /**
-     * Execute workflow
-     * @param {Object} workflow function data required
-     */
-    execute(data, workflows) {
-        workflows = workflows || this.workflows.concat();
-        var workflow;
 
-        if (workflows.length) {
-            workflow = workflows.shift();
-            workflow(data, this.execute.bind(this, data, workflows));
+    /**
+     * 入队
+     * @param {Function} 排队函数
+     */
+    enqueue(task) {
+        //入队
+        queue.push(task);
+        // Backup
+        this.loop&&_queue.push(task);
+    }
+
+    /**
+     * 执行队列函数
+     * @param {Object} 可为空，在排队函数中流通的data
+     * @param {Array} 可为空，替换队列中的排队函数
+     */
+    execute(data, tasks) {
+
+        /**
+         * 如果tasks存在则忽略排队函数
+         */
+        tasks = tasks || queue;
+        let task;
+
+        /**
+         * 队列不为空
+         */
+        if (tasks.length) {
+            /**
+             * 出队
+             */
+            task = tasks.shift();
+            task(data, this.execute.bind(this, data, tasks));
         }else {
-            // Get backup, begin loop
-            if (this._workflows) {
-                this.workflows = this._workflows.concat();
-            }
 
-            workflows = null;
-            this.completeCallback(data);
+            /**
+             * 队列为空，执行完成
+             */
+            task = null;
+            this.tasksAchieved(data);
+
+            // Get backup
+            this.loop&& (queue = _queue.concat())
         }
+    }
+
+    /**
+     * 队列中排队函数执行完成后的回调函数
+     * @param  {Function} fn 
+     * @return {object}   返回队列实例，mock Promise
+     */
+    then(fn) {
+        this.tasksAchieved = fn;
+        return this;
     }
 }
+
