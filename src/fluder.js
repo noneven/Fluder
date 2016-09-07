@@ -12,7 +12,7 @@
 /**
  * workflow Queue
  */
-import Queue from './queue';
+import Queue from './queue'
 
 /**
  * catchError
@@ -28,11 +28,13 @@ import EventEmitter from 'events'
  * Fluder
  */
 export default new class Fluder {
+
     /**
      * 构造函数
      * @return {object} 返回Fluder实例对象
      */
     constructor() {
+
         /**
          * store handlers 注册Map
          * @type {Object}
@@ -56,14 +58,13 @@ export default new class Fluder {
         /**
          * 中间件，集中处理action payload和storeId
          */
-        this._middleware = new Queue((payload) => {
+        this._middleware = new Queue(true).then((payload)=>{
 
             /**
              * 中间件队列执行完后触发Store handler的调用
              */
             this._invoke(payload)
-
-        }, true)
+        })
     }
 
     /**
@@ -154,8 +155,8 @@ export default new class Fluder {
      * @param  {function} middleware  中间件处理函数
      * @return {void}           无返回值
      */
-    enter(middleware){
-        this._middleware.enter(middleware)
+    enqueue(middleware){
+        this._middleware.enqueue(middleware)
     }
 
     /**
