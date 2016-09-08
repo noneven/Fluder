@@ -15,8 +15,8 @@ export function catchError(e){
 
 	throw Error(start +
 		'Error: ' +
-		e.line + "行" +
-		e.column + '列' +
+		(e.line?(e.line + '行'):'') +
+		(e.column?(e.column + '列'):'') +
 		e.message +
 		end);
 }
