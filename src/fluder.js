@@ -58,7 +58,7 @@ export default new class Fluder {
         /**
          * 中间件，集中处理action payload和storeId
          */
-        this._middleware = new Queue(true).then((payload)=>{
+        this._middleware = new Queue(true).after((payload)=>{
 
             /**
              * 中间件队列执行完后触发Store handler的调用
@@ -200,11 +200,18 @@ export default new class Fluder {
 
             /**
              * 发出action的时候 统一走一遍中间件
+             * 
+             * {
+             *     storeId,
+             *     payload
+             * }
+             *
+             * shallow Immutable
              */
-            this._middleware.execute({
+            this._middleware.execute(Object.freeze({
                 storeId,
                 payload
-            })
+            }))
         } catch (e) {
 
             /**
