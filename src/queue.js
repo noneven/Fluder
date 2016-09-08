@@ -75,7 +75,7 @@ export default class Queue {
      * @param  {Function} fn 
      * @return {object}   返回队列实例，mock Promise
      */
-    then(fn) {
+    after(fn) {
         this.tasksAchieved = fn;
         return this;
     }
