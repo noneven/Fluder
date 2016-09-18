@@ -25,10 +25,10 @@ module.exports = {
         extensions: ['', '.js', '.jsx']
     },plugins: [
         //压缩
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        }),
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compress: {
+        //         warnings: false
+        //     }
+        // }),
     ]
 };
