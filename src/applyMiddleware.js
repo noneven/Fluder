@@ -1,4 +1,4 @@
-import Fluder from './fluder';
+var Fluder = require('./fluder');
 
 /**
  * 中间件[对外API]
@@ -6,7 +6,7 @@ import Fluder from './fluder';
  * 这里和redux类似，和express等框架对请求的处理一样
  */
 
-export default function applyMiddleware(middleware) {
+function applyMiddleware(middleware) {
     if (typeof middleware === 'function') {
         /**
          * 中间件是一个队列，一个action发出时
@@ -16,7 +16,7 @@ export default function applyMiddleware(middleware) {
         Fluder.enqueue(middleware);
     }
     if (({}).toString.call(middleware) === '[object Array]') {
-        for (let i = 0; i < middleware.length; i++) {
+        for (var i = 0; i < middleware.length; i++) {
             if (typeof middleware === 'function') {
                 applyMiddleware(middleware[i])
             }
@@ -24,6 +24,7 @@ export default function applyMiddleware(middleware) {
     }
     //支持链式中间件
     return {
-    	applyMiddleware
+    	applyMiddleware: applyMiddleware
     }
 }
+module.exports = applyMiddleware;

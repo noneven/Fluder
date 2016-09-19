@@ -1,5 +1,5 @@
-import Fluder from './fluder';
-import EventEmitter from 'events';
+var Fluder = require('./fluder');
+var EventEmitter = require('events');
 /**
  * 创建store[对外API]
  * @param  {string} storeId  该store的唯一标识，和action里的storeId一一对应
@@ -7,18 +7,18 @@ import EventEmitter from 'events';
  * @param  {object} handlers action的处理回调对象，handler的key需要和actionType一致
  * @return {object}          返回store对象
  */
-export default function storeCreate(storeId, method, handlers) {
+function storeCreate(storeId, method, handlers) {
     /**
      * 不存在storeId
      */
     if (typeof storeId == 'undefined') {
         throw Error('id is reauired as create a store, and the id is the same of store!');
     }
-    const CHANGE_EVENT = 'change';
+    var CHANGE_EVENT = 'change';
     /**
      * 创建store，继承EventEmitter
      */
-    let store = Object.assign(method, EventEmitter.prototype, {
+    var store = Object.assign(method, EventEmitter.prototype, {
         /**
          * 统一Store的EventEmitter调用方式，避免和全局EventEmitter混淆
          * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
@@ -42,3 +42,5 @@ export default function storeCreate(storeId, method, handlers) {
 
     return store;
 }
+
+module.exports = storeCreate;

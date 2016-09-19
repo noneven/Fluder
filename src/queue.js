@@ -1,83 +1,76 @@
-
 /**
  * 队列
  * @type {Array}
  */
-let queue = []
+var queue = []
 
 /**
  * 队列备份
  * @type {Array}
  */
-let _queue = []
+var _queue = []
 
 /**
  * 队列类
  */
-export default class Queue {
+function Queue(loop) {
+    this.loop = (typeof loop == 'undefined') ? false : true
+}
+
+/**
+ * 入队
+ * @param {Function} 排队函数
+ */
+Queue.prototype.enqueue = function(task) {
+    //入队
+    queue.push(task);
+    // Backup
+    this.loop && _queue.push(task);
+}
+
+/**
+ * 执行队列函数
+ * @param {Object} 可为空，在排队函数中流通的data
+ * @param {Array} 可为空，替换队列中的排队函数
+ */
+Queue.prototype.execute = function(data, tasks) {
 
     /**
-     * 构造函数
-     * @param {Boolean} 是否循环执行队列
+     * 如果tasks存在则忽略排队函数
      */
-    constructor(loop=true) {
-        this.loop = loop;
-    }
+    tasks = tasks || queue;
+    var task;
 
     /**
-     * 入队
-     * @param {Function} 排队函数
+     * 队列不为空
      */
-    enqueue(task) {
-        //入队
-        queue.push(task);
-        // Backup
-        this.loop&&_queue.push(task);
-    }
-
-    /**
-     * 执行队列函数
-     * @param {Object} 可为空，在排队函数中流通的data
-     * @param {Array} 可为空，替换队列中的排队函数
-     */
-    execute(data, tasks) {
+    if (tasks.length) {
+        /**
+         * 出队
+         */
+        task = tasks.shift();
+        task(data, this.execute.bind(this, data, tasks));
+    } else {
 
         /**
-         * 如果tasks存在则忽略排队函数
+         * 队列为空，执行完成
          */
-        tasks = tasks || queue;
-        let task;
+        task = null;
+        this.tasksAchieved(data);
 
-        /**
-         * 队列不为空
-         */
-        if (tasks.length) {
-            /**
-             * 出队
-             */
-            task = tasks.shift();
-            task(data, this.execute.bind(this, data, tasks));
-        }else {
-
-            /**
-             * 队列为空，执行完成
-             */
-            task = null;
-            this.tasksAchieved(data);
-
-            // Get backup
-            this.loop&& (queue = _queue.concat())
-        }
-    }
-
-    /**
-     * 队列中排队函数执行完成后的回调函数
-     * @param  {Function} fn 
-     * @return {object}   返回队列实例，mock Promise
-     */
-    after(fn) {
-        this.tasksAchieved = fn;
-        return this;
+        // Get backup
+        this.loop && (queue = _queue.concat())
     }
 }
 
+/**
+ * 队列中排队函数执行完成后的回调函数
+ * @param  {Function} fn
+ * @return {object}   返回队列实例，mock Promise
+ */
+Queue.prototype.after = function(fn) {
+    this.tasksAchieved = fn;
+    return this;
+}
+
+module.exports = Queue

@@ -1,11 +1,11 @@
-import Fluder from './fluder';
+var Fluder = require('./fluder');
 /**
  * 创建action[对外API]
  * @param  {string} storeId  该action作用于那个store,和store的storeId一一对应
  * @param  {object} actionCreators 需要创建的action对象
  * @return {object} 返回一个actions对象,具有调用action触发store change的能力
  */
-export default function actionCreate(storeId, actionCreators) {
+function actionCreate(storeId, actionCreators) {
     /**
      * 不存在storeId
      */
@@ -17,11 +17,11 @@ export default function actionCreate(storeId, actionCreators) {
         console.warn('action handler\'s length is 0, need you have a action handler?');
     }
 
-    let creator, actions = {};
+    var creator, actions = {};
     /**
      * 遍历创建Action
      */
-    for (let name in actionCreators) {
+    for (var name in actionCreators) {
         creator = actionCreators[name];
         /**
          * 创建闭包，让creator不被回收
@@ -37,3 +37,5 @@ export default function actionCreate(storeId, actionCreators) {
     }
     return actions;
 }
+
+module.exports = actionCreate;

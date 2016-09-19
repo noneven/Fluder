@@ -21917,28 +21917,10 @@
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.actionStoreCreate = exports.applyMiddleware = exports.actionCreate = exports.storeCreate = undefined;
-	
-	var _storeCreator = __webpack_require__(181);
-	
-	var _storeCreator2 = _interopRequireDefault(_storeCreator);
-	
-	var _actionCreator = __webpack_require__(186);
-	
-	var _actionCreator2 = _interopRequireDefault(_actionCreator);
-	
-	var _applyMiddleware = __webpack_require__(187);
-	
-	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
-	
-	var _actionStoreCreator = __webpack_require__(188);
-	
-	var _actionStoreCreator2 = _interopRequireDefault(_actionStoreCreator);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var storeCreate = __webpack_require__(181);
+	var actionCreate = __webpack_require__(186);
+	var applyMiddleware = __webpack_require__(187);
+	var actionStoreCreate = __webpack_require__(188);
 	
 	/*
 	* This is a dummy function to check if the function name has been altered by minification.
@@ -21950,10 +21932,12 @@
 	  console.warn('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Fluder. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
 	}
 	
-	exports.storeCreate = _storeCreator2.default;
-	exports.actionCreate = _actionCreator2.default;
-	exports.applyMiddleware = _applyMiddleware2.default;
-	exports.actionStoreCreate = _actionStoreCreator2.default;
+	module.exports = {
+	  storeCreate: storeCreate,
+	  actionCreate: actionCreate,
+	  applyMiddleware: applyMiddleware,
+	  actionStoreCreate: actionStoreCreate
+	};
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
@@ -21962,21 +21946,8 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = storeCreate;
-	
-	var _fluder = __webpack_require__(182);
-	
-	var _fluder2 = _interopRequireDefault(_fluder);
-	
-	var _events = __webpack_require__(185);
-	
-	var _events2 = _interopRequireDefault(_events);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
+	var Fluder = __webpack_require__(182);
+	var EventEmitter = __webpack_require__(185);
 	/**
 	 * 创建store[对外API]
 	 * @param  {string} storeId  该store的唯一标识，和action里的storeId一一对应
@@ -21995,7 +21966,7 @@
 	    /**
 	     * 创建store，继承EventEmitter
 	     */
-	    var store = Object.assign(method, _events2.default.prototype, {
+	    var store = Object.assign(method, EventEmitter.prototype, {
 	        /**
 	         * 统一Store的EventEmitter调用方式，避免和全局EventEmitter混淆
 	         * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
@@ -22015,10 +21986,12 @@
 	        }
 	    });
 	
-	    _fluder2.default.register(storeId, { store: store, handlers: handlers });
+	    Fluder.register(storeId, { store: store, handlers: handlers });
 	
 	    return store;
 	}
+	
+	module.exports = storeCreate;
 
 /***/ },
 /* 182 */
@@ -22026,11 +21999,6 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	/**
 	 * Fluder 0.1.0
 	 * A unidirectional data flow tool based on flux.
@@ -22044,278 +22012,224 @@
 	/**
 	 * workflow Queue
 	 */
-	
+	var Queue = __webpack_require__(183);
 	
 	/**
 	 * catchError
 	 */
-	
+	var Tool = __webpack_require__(184);
+	var catchError = Tool.catchError;
 	
 	/**
 	 * custom Event
 	 */
-	
-	
-	var _queue = __webpack_require__(183);
-	
-	var _queue2 = _interopRequireDefault(_queue);
-	
-	var _tools = __webpack_require__(184);
-	
-	var _events = __webpack_require__(185);
-	
-	var _events2 = _interopRequireDefault(_events);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var EventEmitter = __webpack_require__(185);
 	
 	/**
-	 * Fluder
+	 * 构造函数
+	 * @return {object} 返回Fluder实例对象
 	 */
-	exports.default = new (function () {
+	function Fluder() {
+	  /**
+	   * store handlers 注册Map
+	   * @type {Object}
+	   */
+	  this._registers = {};
 	
 	  /**
-	   * 构造函数
-	   * @return {object} 返回Fluder实例对象
+	   * dispatch栈
+	   * @type {Array}
 	   */
-	  function Fluder() {
-	    _classCallCheck(this, Fluder);
+	  this._dispatchStack = [];
+	
+	  /**
+	   * 初始化
+	   */
+	  this._init();
+	}
+	
+	Fluder.prototype._init = function () {
+	  var _this = this;
+	
+	  /**
+	   * 中间件，集中处理action payload和storeId
+	   */
+	  this._middleware = new Queue(true).after(function (payload) {
 	
 	    /**
-	     * store handlers 注册Map
-	     * @type {Object}
+	     * 中间件队列执行完后触发Store handler的调用
 	     */
-	    this._registers = {};
+	    _this._invoke(payload);
+	  });
+	};
+	
+	/**
+	 * action对handler的调用(内部调用)
+	 * @param  {object} payload 此时的payload包含action和action对应的storeId
+	 * @return {void}           无返回值
+	 */
+	Fluder.prototype._invoke = function (payload) {
+	
+	  /**
+	   * storeId: 用于map到register里面注册的handler
+	   * @type {string}
+	   */
+	  var storeId = payload.storeId;
+	
+	  /**
+	   * store和它对应的handler
+	   * @type {object}
+	   */
+	  var store = this._registers[storeId]["store"];
+	  var handlers = this._registers[storeId]["handlers"];
+	
+	  /**
+	   * action payload
+	   * @type {object}
+	   */
+	  payload = payload.payload;
+	
+	  /**
+	   * 在当前storeId的store Map到对应的handler
+	   * @type {function}
+	   */
+	  var handler = handlers[payload.type];
+	
+	  if (typeof handler === 'function') {
 	
 	    /**
-	     * dispatch栈
-	     * @type {Array}
+	     * TODO
+	     * result应该为store数据的copy，暂时没做深度copy，后续把Store改写成Immutable数据结构
+	     * view-controller里面对result的修改不会影响到store里的数据
 	     */
-	    this._dispatchStack = [];
+	    var result;
+	    var _result = handler.call(store, payload);
 	
 	    /**
-	     * 初始化
+	     * 可以没有返回值，只是set Store里面的值
+	     * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
 	     */
-	    this._init();
+	    // if (result !== undefined) {
+	    store.emitChange(payload, result);
+	    // }
+	  }
+	};
+	
+	/**
+	 * 更新Action栈以及记录当前ActionID
+	 */
+	Fluder.prototype._startDispatch = function (storeId) {
+	  this._dispatchStack || (this._dispatchStack = []);
+	  this._dispatchStack.push(storeId);
+	  this._currentDispatch = storeId;
+	};
+	
+	/**
+	 * Action执行完更新Action栈以及删除当前ActionID
+	 */
+	Fluder.prototype._endDispatch = function () {
+	  this._dispatchStack.pop();
+	  this._currentDispatch = null;
+	};
+	
+	/**
+	 * Store和handler注册
+	 * @param  {string} storeId store/action唯一标示
+	 * @param  {object} storeHandler  store和handler
+	 * @return {void}           无返回值
+	 */
+	Fluder.prototype.register = function (storeId, storeHandler) {
+	  this._registers[storeId] = storeHandler;
+	};
+	
+	/**
+	 * 中间件入队
+	 * @param  {function} middleware  中间件处理函数
+	 * @return {void}           无返回值
+	 */
+	Fluder.prototype.enqueue = function (middleware) {
+	  this._middleware.enqueue(middleware);
+	};
+	
+	/**
+	 * 触发action(内部调用)
+	 * @param  {string} storeId store/action唯一标示
+	 * @param  {object} action  action数据
+	 * @return {void}           无返回值
+	 */
+	Fluder.prototype.dispatch = function (storeId, payload) {
+	
+	  /**
+	   * 在当前Action触发的Store handler回调函数中再次发起了当前Action，这样会造成A-A循环调用,出现栈溢出
+	   */
+	  if (this._currentDispatch == storeId) {
+	
+	    throw Error('action ' + (payload.value && payload.value.actionType) + ' __invoke__ myself!');
 	  }
 	
-	  _createClass(Fluder, [{
-	    key: '_init',
-	    value: function _init() {
-	      var _this = this;
+	  /**
+	   * 在当前Action触发的Store handler回调函数中再次触发了当前Action栈中的Action，出现A-B-C-A式循环调用，也会出现栈溢出
+	   */
+	  if (this._dispatchStack.indexOf(storeId) != -1) {
 	
-	      /**
-	       * 中间件，集中处理action payload和storeId
-	       */
-	      this._middleware = new _queue2.default(true).after(function (payload) {
+	    throw Error(this._dispatchStack.join(' -> ') + storeId + ' : action __invoke__ to a circle!');
+	  }
 	
-	        /**
-	         * 中间件队列执行完后触发Store handler的调用
-	         */
-	        _this._invoke(payload);
-	      });
-	    }
+	  /**
+	   * 更新Action栈以及记录当前ActionID
+	   */
+	  this._startDispatch(storeId);
 	
-	    /**
-	     * action对handler的调用(内部调用)
-	     * @param  {object} payload 此时的payload包含action和action对应的storeId
-	     * @return {void}           无返回值
-	     */
+	  /**
+	   * Action的触发必须有ActionType，原因是ActionType和Store handlers Map的key一一对应
+	   */
+	  if (!payload.type) {
 	
-	  }, {
-	    key: '_invoke',
-	    value: function _invoke(payload) {
+	    throw new Error('action type does not exist in \n' + JSON.stringify(payload, null, 2));
+	  }
 	
-	      /**
-	       * storeId: 用于map到register里面注册的handler
-	       * @type {string}
-	       */
-	      var _payload = payload;
-	      var storeId = _payload.storeId;
-	
-	      /**
-	       * store和它对应的handler
-	       * @type {object}
-	       */
-	
-	      var _registers$storeId = this._registers[storeId];
-	      var store = _registers$storeId.store;
-	      var handlers = _registers$storeId.handlers;
-	
-	      /**
-	       * action payload
-	       * @type {object}
-	       */
-	
-	      payload = payload.payload;
-	
-	      /**
-	       * 在当前storeId的store Map到对应的handler
-	       * @type {function}
-	       */
-	      var handler = handlers[payload.type];
-	
-	      if (typeof handler === 'function') {
-	
-	        /**
-	         * TODO
-	         * result应该为store数据的copy，暂时没做深度copy，后续把Store改写成Immutable数据结构
-	         * view-controller里面对result的修改不会影响到store里的数据
-	         */
-	        var result = void 0;
-	        var _result = handler.call(store, payload);
-	
-	        /**
-	         * 可以没有返回值，只是set Store里面的值
-	         * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
-	         */
-	        // if (result !== undefined) {
-	        store.emitChange(payload, result);
-	        // }
-	      }
-	    }
+	  try {
 	
 	    /**
-	     * 更新Action栈以及记录当前ActionID
+	     * 发出action的时候 统一走一遍中间件
+	     *
+	     * {
+	     *     storeId,
+	     *     payload
+	     * }
+	     *
+	     * shallow Immutable
 	     */
-	
-	  }, {
-	    key: '_startDispatch',
-	    value: function _startDispatch(storeId) {
-	      this._dispatchStack || (this._dispatchStack = []);
-	      this._dispatchStack.push(storeId);
-	      this._currentDispatch = storeId;
-	    }
+	    this._middleware.execute(Object.freeze({
+	      storeId: storeId,
+	      payload: payload
+	    }));
+	  } catch (e) {
 	
 	    /**
-	     * Action执行完更新Action栈以及删除当前ActionID
+	     * 执行handler的时候出错end掉当前dispatch
 	     */
-	
-	  }, {
-	    key: '_endDispatch',
-	    value: function _endDispatch() {
-	      this._dispatchStack.pop();
-	      this._currentDispatch = null;
-	    }
+	    this._endDispatch();
 	
 	    /**
-	     * Store和handler注册
-	     * @param  {string} storeId store/action唯一标示
-	     * @param  {object} storeHandler  store和handler
-	     * @return {void}           无返回值
+	     * 抛出错误信息
 	     */
+	    catchError(e);
+	  }
 	
-	  }, {
-	    key: 'register',
-	    value: function register(storeId, storeHandler) {
-	      this._registers[storeId] = storeHandler;
-	    }
+	  /**
+	   * Action执行完更新Action栈以及删除当前ActionID
+	   */
+	  this._endDispatch();
+	};
 	
-	    /**
-	     * 中间件入队
-	     * @param  {function} middleware  中间件处理函数
-	     * @return {void}           无返回值
-	     */
-	
-	  }, {
-	    key: 'enqueue',
-	    value: function enqueue(middleware) {
-	      this._middleware.enqueue(middleware);
-	    }
-	
-	    /**
-	     * 触发action(内部调用)
-	     * @param  {string} storeId store/action唯一标示
-	     * @param  {object} action  action数据
-	     * @return {void}           无返回值
-	     */
-	
-	  }, {
-	    key: 'dispatch',
-	    value: function dispatch(storeId, payload) {
-	
-	      /**
-	       * 在当前Action触发的Store handler回调函数中再次发起了当前Action，这样会造成A-A循环调用,出现栈溢出
-	       */
-	      if (this._currentDispatch == storeId) {
-	
-	        throw Error('action ' + (payload.value && payload.value.actionType) + ' __invoke__ myself!');
-	      }
-	
-	      /**
-	       * 在当前Action触发的Store handler回调函数中再次触发了当前Action栈中的Action，出现A-B-C-A式循环调用，也会出现栈溢出
-	       */
-	      if (this._dispatchStack.indexOf(storeId) != -1) {
-	
-	        throw Error(this._dispatchStack.join(' -> ') + storeId + ' : action __invoke__ to a circle!');
-	      }
-	
-	      /**
-	       * 更新Action栈以及记录当前ActionID
-	       */
-	      this._startDispatch(storeId);
-	
-	      /**
-	       * Action的触发必须有ActionType，原因是ActionType和Store handlers Map的key一一对应
-	       */
-	      if (!payload.type) {
-	
-	        throw new Error('action type does not exist in \n' + JSON.stringify(payload, null, 2));
-	      }
-	
-	      try {
-	
-	        /**
-	         * 发出action的时候 统一走一遍中间件
-	         * 
-	         * {
-	         *     storeId,
-	         *     payload
-	         * }
-	         *
-	         * shallow Immutable
-	         */
-	        this._middleware.execute(Object.freeze({
-	          storeId: storeId,
-	          payload: payload
-	        }));
-	      } catch (e) {
-	
-	        /**
-	         * 执行handler的时候出错end掉当前dispatch
-	         */
-	        this._endDispatch();
-	
-	        /**
-	         * 抛出错误信息
-	         */
-	        (0, _tools.catchError)(e);
-	      }
-	
-	      /**
-	       * Action执行完更新Action栈以及删除当前ActionID
-	       */
-	      this._endDispatch();
-	    }
-	  }]);
-	
-	  return Fluder;
-	}())();
+	module.exports = new Fluder();
 
 /***/ },
 /* 183 */
 /***/ function(module, exports) {
 
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	'use strict';
 	
 	/**
 	 * 队列
@@ -22332,92 +22246,67 @@
 	/**
 	 * 队列类
 	 */
+	function Queue(loop) {
+	  this.loop = typeof loop == 'undefined' ? false : true;
+	}
 	
-	var Queue = function () {
+	/**
+	 * 入队
+	 * @param {Function} 排队函数
+	 */
+	Queue.prototype.enqueue = function (task) {
+	  //入队
+	  queue.push(task);
+	  // Backup
+	  this.loop && _queue.push(task);
+	};
+	
+	/**
+	 * 执行队列函数
+	 * @param {Object} 可为空，在排队函数中流通的data
+	 * @param {Array} 可为空，替换队列中的排队函数
+	 */
+	Queue.prototype.execute = function (data, tasks) {
 	
 	  /**
-	   * 构造函数
-	   * @param {Boolean} 是否循环执行队列
+	   * 如果tasks存在则忽略排队函数
 	   */
-	  function Queue() {
-	    var loop = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+	  tasks = tasks || queue;
+	  var task;
 	
-	    _classCallCheck(this, Queue);
+	  /**
+	   * 队列不为空
+	   */
+	  if (tasks.length) {
+	    /**
+	     * 出队
+	     */
+	    task = tasks.shift();
+	    task(data, this.execute.bind(this, data, tasks));
+	  } else {
 	
-	    this.loop = loop;
+	    /**
+	     * 队列为空，执行完成
+	     */
+	    task = null;
+	    this.tasksAchieved(data);
+	
+	    // Get backup
+	    this.loop && (queue = _queue.concat());
 	  }
+	};
 	
-	  /**
-	   * 入队
-	   * @param {Function} 排队函数
-	   */
+	/**
+	 * 队列中排队函数执行完成后的回调函数
+	 * @param  {Function} fn
+	 * @return {object}   返回队列实例，mock Promise
+	 */
+	Queue.prototype.after = function (fn) {
+	  this.tasksAchieved = fn;
+	  return this;
+	};
 	
-	
-	  _createClass(Queue, [{
-	    key: "enqueue",
-	    value: function enqueue(task) {
-	      //入队
-	      queue.push(task);
-	      // Backup
-	      this.loop && _queue.push(task);
-	    }
-	
-	    /**
-	     * 执行队列函数
-	     * @param {Object} 可为空，在排队函数中流通的data
-	     * @param {Array} 可为空，替换队列中的排队函数
-	     */
-	
-	  }, {
-	    key: "execute",
-	    value: function execute(data, tasks) {
-	
-	      /**
-	       * 如果tasks存在则忽略排队函数
-	       */
-	      tasks = tasks || queue;
-	      var task = void 0;
-	
-	      /**
-	       * 队列不为空
-	       */
-	      if (tasks.length) {
-	        /**
-	         * 出队
-	         */
-	        task = tasks.shift();
-	        task(data, this.execute.bind(this, data, tasks));
-	      } else {
-	
-	        /**
-	         * 队列为空，执行完成
-	         */
-	        task = null;
-	        this.tasksAchieved(data);
-	
-	        // Get backup
-	        this.loop && (queue = _queue.concat());
-	      }
-	    }
-	
-	    /**
-	     * 队列中排队函数执行完成后的回调函数
-	     * @param  {Function} fn 
-	     * @return {object}   返回队列实例，mock Promise
-	     */
-	
-	  }, {
-	    key: "after",
-	    value: function after(fn) {
-	      this.tasksAchieved = fn;
-	      return this;
-	    }
-	  }]);
-	
-	  return Queue;
-	}();
-	
-	exports.default = Queue;
+	module.exports = Queue;
 
 /***/ },
 /* 184 */
@@ -22425,23 +22314,24 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.unique = unique;
-	exports.catchError = catchError;
 	function unique() {
-		/**
+	    /**
 	     * Fluder Store唯一ID
 	     */
-		return '@@Fluder/StoreId/' + Math.random().toString(36).substring(7).split('').join('.');
+	    return '@@Fluder/StoreId/' + Math.random().toString(36).substring(7).split('').join('.');
 	}
-	function catchError(e) {
-		var start = '\n\n@@Fluder/Start\n';
-		var end = '\n@@Fluder/End\n\n';
 	
-		throw Error(start + 'Error: ' + (e.line ? e.line + '行' : '') + (e.column ? e.column + '列' : '') + e.message + end);
+	function catchError(e) {
+	    var start = '\n\n@@Fluder/Start\n';
+	    var end = '\n@@Fluder/End\n\n';
+	
+	    throw Error(start + 'Error: ' + (e.line ? e.line + '行' : '') + (e.column ? e.column + '列' : '') + e.message + end);
 	}
+	
+	module.exports = {
+	    unique: unique,
+	    catchError: catchError
+	};
 
 /***/ },
 /* 185 */
@@ -22727,17 +22617,7 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = actionCreate;
-	
-	var _fluder = __webpack_require__(182);
-	
-	var _fluder2 = _interopRequireDefault(_fluder);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
+	var Fluder = __webpack_require__(182);
 	/**
 	 * 创建action[对外API]
 	 * @param  {string} storeId  该action作用于那个store,和store的storeId一一对应
@@ -22756,7 +22636,7 @@
 	    console.warn('action handler\'s length is 0, need you have a action handler?');
 	  }
 	
-	  var creator = void 0,
+	  var creator,
 	      actions = {};
 	  /**
 	   * 遍历创建Action
@@ -22773,10 +22653,12 @@
 	         */
 	        return this.dispatch(storeId, creator.apply(undefined, arguments));
 	      }.bind(this);
-	    }.call(_fluder2.default, storeId, creator);
+	    }.call(Fluder, storeId, creator);
 	  }
 	  return actions;
 	}
+	
+	module.exports = actionCreate;
 
 /***/ },
 /* 187 */
@@ -22784,16 +22666,7 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = applyMiddleware;
-	
-	var _fluder = __webpack_require__(182);
-	
-	var _fluder2 = _interopRequireDefault(_fluder);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var Fluder = __webpack_require__(182);
 	
 	/**
 	 * 中间件[对外API]
@@ -22808,7 +22681,7 @@
 	         * 需要排队等到所有的中间件 完成才会触发对应的handler
 	         * @param  {function} middleware
 	         */
-	        _fluder2.default.enqueue(middleware);
+	        Fluder.enqueue(middleware);
 	    }
 	    if ({}.toString.call(middleware) === '[object Array]') {
 	        for (var i = 0; i < middleware.length; i++) {
@@ -22822,6 +22695,7 @@
 	        applyMiddleware: applyMiddleware
 	    };
 	}
+	module.exports = applyMiddleware;
 
 /***/ },
 /* 188 */
@@ -22829,31 +22703,20 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.default = actionStoreCreate;
+	var Tool = __webpack_require__(184);
+	var unique = Tool.unique;
+	var storeCreate = __webpack_require__(181);
+	var actionCreate = __webpack_require__(186);
 	
-	var _tools = __webpack_require__(184);
-	
-	var _storeCreator = __webpack_require__(181);
-	
-	var _storeCreator2 = _interopRequireDefault(_storeCreator);
-	
-	var _actionCreator = __webpack_require__(186);
-	
-	var _actionCreator2 = _interopRequireDefault(_actionCreator);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function actionStoreCreate(actionCreators, method, handlers) {
-		var storeId = arguments.length <= 3 || arguments[3] === undefined ? (0, _tools.unique)() : arguments[3];
-	
+	function actionStoreCreate(actionCreators, method, handlers, storeId) {
+		storeId = storeId || unique();
 		return {
-			actionor: (0, _actionCreator2.default)(storeId, actionCreators),
-			storeor: (0, _storeCreator2.default)(storeId, method, handlers)
+			actionor: actionCreate(storeId, actionCreators),
+			storeor: storeCreate(storeId, method, handlers)
 		};
 	}
+	
+	module.exports = actionStoreCreate;
 
 /***/ },
 /* 189 */
@@ -22882,7 +22745,6 @@
 	    var storeId = data.storeId;
 	    var payload = data.payload;
 	
-	    payload.addParms = 'addParms';
 	    if (payload.uri) {
 	        fetch(payload.uri).then(function (response) {
 	            return response.json();
