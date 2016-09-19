@@ -38,7 +38,7 @@ function storeCreate(storeId, method, handlers) {
         }
     });
 
-    Fluder.register(storeId, {store,handlers});
+    Fluder.register(storeId, {store:store,handlers:handlers});
 
     return store;
 }

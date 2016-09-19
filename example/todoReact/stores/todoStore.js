@@ -1,7 +1,7 @@
 /**
  * STORE部分
  */
-import {storeCreate} from '../../src'
+import {storeCreate} from '../../../src'
 /**
  * 启用中间件
  */
@@ -14,14 +14,14 @@ import constants from '../constants/constants';
 var TODOID = constants.TODO_STORE_ID;
 /**
  * store数据(states)存储
- */ 
+ */
 let items = function(){
     var TODOAPP = localStorage.getItem('TODOAPP');
     return TODOAPP?JSON.parse(TODOAPP):[];
 }();
 /**
  * store不提供set操作，只能在handler里面做set
- */ 
+ */
 let API = {
     set: function(item){
         items.push({text:item});
@@ -74,7 +74,7 @@ var todoStore = storeCreate(TODOID, {
     },
 
     [`${TODOID}/${constants.DEL_ALL}`]: function(){
-        API.delAll(); 
+        API.delAll();
         return items;
     },
 

@@ -53,13 +53,13 @@ Fluder.prototype._init = function() {
     /**
      * 中间件，集中处理action payload和storeId
      */
-    this._middleware = new Queue(true).after((payload)=>{
+    this._middleware = new Queue(true).after(function(payload){
 
         /**
          * 中间件队列执行完后触发Store handler的调用
          */
         this._invoke(payload)
-    })
+    }.bind(this))
 }
 
 /**

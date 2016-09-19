@@ -31,7 +31,7 @@ function actionCreate(storeId, actionCreators) {
                 /**
                  * action里面发出改变store消息
                  */
-                return this.dispatch(storeId, creator(...arguments));
+                return this.dispatch(storeId, creator.apply(null,arguments));
             }.bind(this);
         }.call(Fluder, storeId, creator);
     }

@@ -1,4 +1,4 @@
-import {actionCreate} from '../../src';
+import {actionCreate} from '../../../src';
 
 import constants from '../constants/constants';
 const TODOID = constants.TODO_STORE_ID;

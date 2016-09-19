@@ -21915,22 +21915,12 @@
 /* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	'use strict';
 	
 	var storeCreate = __webpack_require__(181);
 	var actionCreate = __webpack_require__(186);
 	var applyMiddleware = __webpack_require__(187);
 	var actionStoreCreate = __webpack_require__(188);
-	
-	/*
-	* This is a dummy function to check if the function name has been altered by minification.
-	* If the function has been minified and NODE_ENV !== 'production', warn the user.
-	*/
-	function isCrushed() {}
-	
-	if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
-	  console.warn('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Fluder. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
-	}
 	
 	module.exports = {
 	  storeCreate: storeCreate,
@@ -21938,7 +21928,6 @@
 	  applyMiddleware: applyMiddleware,
 	  actionStoreCreate: actionStoreCreate
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 181 */
@@ -22049,7 +22038,6 @@
 	}
 	
 	Fluder.prototype._init = function () {
-	  var _this = this;
 	
 	  /**
 	   * 中间件，集中处理action payload和storeId
@@ -22059,7 +22047,7 @@
 	    /**
 	     * 中间件队列执行完后触发Store handler的调用
 	     */
-	    _this._invoke(payload);
+	    this._invoke(payload);
 	  });
 	};
 	
@@ -22651,7 +22639,7 @@
 	        /**
 	         * action里面发出改变store消息
 	         */
-	        return this.dispatch(storeId, creator.apply(undefined, arguments));
+	        return this.dispatch(storeId, creator.apply(null, arguments));
 	      }.bind(this);
 	    }.call(Fluder, storeId, creator);
 	  }
@@ -22980,8 +22968,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./index.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./index.css");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./index.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./index.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
