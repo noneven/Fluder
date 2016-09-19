@@ -1,7 +1,7 @@
 # Fluder
 A unidirectional data flow tool based on flux.
 
-更加轻量，更加便捷，更加高效。
+更加轻量，更加便捷，更加高效。[没有框架限制/React、Vue完美使用]
 
 ![fluder-design](./fluder-design.png)
 
@@ -91,5 +91,3 @@ actionStoreCreate-Action和Store一起创建
 ## License
 
 MIT
-
-
