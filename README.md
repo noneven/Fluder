@@ -210,6 +210,13 @@ _onTodoChange(){
     items: todoStore.getAll()
   })
 }
+//add时调用
+addTodo(e){
+  todoAction.addTodo({
+    text: e.target.value,
+    done: false
+  });
+}
 ```
 
 - Vue Component
@@ -218,6 +225,13 @@ _onTodoChange(){
 import todoStore from 'stores/todoStore';
 //...
 methods:{
+  //add时调用
+  addTodo(e){
+    todoAction.addTodo({
+      text: e.target.value,
+      done: false
+    });
+  },
   _onTodoChange(){
     this.items = todoStore.getAll()
   }
