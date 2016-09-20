@@ -8,7 +8,7 @@ A unidirectional data flow tool based on flux.
 
 ## 安装
 
-### npm
+npm: https://www.npmjs.com/package/fluder
 
 使用 npm 来安装 Fluder
 
