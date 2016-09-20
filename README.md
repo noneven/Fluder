@@ -197,9 +197,45 @@ function push(item){
 }
 ```
 
+- React Component
+
+```javascript
+import todoStore from 'stores/todoStore';
+//...
+componentDidMount(){
+  todoStore.addChangeListener(this._onTodoChange.bind(this))
+}
+_onTodoChange(){
+  this.setState({
+    items: todoStore.getAll()
+  })
+}
+```
+
+- Vue Component
+
+```javascript
+import todoStore from 'stores/todoStore';
+//...
+methods:{
+  _onTodoChange(){
+    this.items = todoStore.getAll()
+  }
+},
+ready (){
+  todoStore.addChangeListener(this._onTodoChange)
+}
+```
+
+> Vue and React Action/Store Create with the same code
+
 ## Thanks
 
-[Flux](https://github.com/facebook/flux) [Redux](https://github.com/reactjs/redux) [Webpack](https://github.com/webpack/webpack)
+[Flux](https://github.com/facebook/flux)
+
+[Redux](https://github.com/reactjs/redux)
+
+[Webpack](https://github.com/webpack/webpack)
 
 ## License
 
