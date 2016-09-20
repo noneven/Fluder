@@ -201,7 +201,8 @@ Fluder.prototype.dispatch = function(storeId, payload) {
          */
         this._middleware.execute(Object.freeze({
             storeId:storeId,
-            payload:payload
+            payload:payload,
+            store: this._registers[storeId]["store"]
         }))
     } catch (e) {
 
