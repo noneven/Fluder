@@ -9,7 +9,10 @@ function unique() {
         .split('')
         .join('.');
 }
-
+/**
+ * 可以有中间件实现
+ * @param  {error} e 错误对象
+ */
 function catchError(e) {
     var start = '\n\n@@Fluder/Start\n';
     var end = '\n@@Fluder/End\n\n';
