@@ -16,6 +16,27 @@ A unidirectional data flow tool based on flux.
 npm install fluder
 ```
 
+运行Example
+
+```javascript
+//Vue example
+npm run exampleVue
+
+//React example
+npm run exampleReact
+```
+
+构建
+
+```javascript
+npm run build
+```
+测试
+
+```javascript
+npm run test
+```
+
 调用
 
 ```javascript
