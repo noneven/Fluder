@@ -187,8 +187,14 @@ export default actionStoreCreate({
     push(payload.value)
     return items
   }
-})
-//storeId选填[内部统一了ID]
+})//storeId选填[内部统一了ID]
+
+/**
+ * 写权限API
+ */
+function push(item){
+  items.push(item)
+}
 ```
 
 ## Thanks
