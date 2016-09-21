@@ -1,6 +1,5 @@
 
 /**
- * TODO
  * action create test
  */
 
@@ -25,29 +24,21 @@ describe('actionCreator tests', function() {
     }).to.throw(/id is reauired as creating a action!/);
   });
 
+  var actionMap = {
+    "addTodo": function(){
+      console.log('addTodo')
+    }
+  };
   it('actionCreator should return a object', function() {
-    expect(actionCreate('storeId',{
-      "addTodo": function(){
-        console.log('addTodo')
-      }
-    })).to.be.an('object');
+    expect(actionCreate('storeId',actionMap)).to.be.an('object');
   });
 
   it('actionCreator should return a object contact enter object', function() {
-    expect(actionCreate('storeId',{
-      "addTodo": function(){
-        console.log('addTodo')
-      }
-    })).to.have.property('addTodo');
+    expect(actionCreate('storeId',actionMap)).to.have.property('addTodo');
   });
 
-
   it('actionCreator return a object, it\'s values should function allways', function() {
-    var values = objectValues(actionCreate('storeId',{
-      "addTodo": function(){
-        console.log('addTodo')
-      }
-    }));
+    var values = objectValues(actionCreate('storeId',actionMap));
 
     for (var i = 0; i < values.length; i++) {
       expect(values[i]).to.be.an("function");
