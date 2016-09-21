@@ -3,6 +3,8 @@
 A unidirectional data flow tool based on flux.
 
 更加轻量，更加便捷，更加高效。[没有框架限制/React、Vue完美使用]
+[![Build Status](https://travis-ci.org/coderwin/Fluder.svg?branch=master)](https://travis-ci.org/coderwin/Fluder)
+[![npm ver](https://img.shields.io/npm/v/fluder.svg?style=flat)](https://www.npmjs.com/package/fluder)
 
 ![fluder-design](./fluder-design.png)
 
