@@ -23,7 +23,7 @@
     "react-dom": "^15.3.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.1",
-    "mocha": "^3.02",
+    "mocha": "^3.0.2",
     "chai": "^3.5.0"
   },
   "scripts": {
