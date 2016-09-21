@@ -14,7 +14,7 @@ var _queue = []
  * 队列类
  */
 function Queue(loop) {
-    this.loop = (typeof loop == 'undefined') ? false : true
+    this.loop = (typeof loop == 'undefined') ? true : loop
 }
 
 /**
