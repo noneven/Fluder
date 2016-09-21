@@ -34,7 +34,7 @@ export default {
       this.items = todoStore.getAll();
     }
   },
-  ready (){
+  created (){
     todoStore.addChangeListener(this._onTodoChange)
   }
 }
