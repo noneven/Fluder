@@ -21971,7 +21971,7 @@
 	            this.removeListener(CHANGE_EVENT, callback);
 	        },
 	        removeAllChangeListener: function removeAllChangeListener() {
-	            this.removeAllListener();
+	            this.removeAllListeners();
 	        }
 	    });
 	
@@ -22048,7 +22048,7 @@
 	     * 中间件队列执行完后触发Store handler的调用
 	     */
 	    this._invoke(payload);
-	  });
+	  }.bind(this));
 	};
 	
 	/**
@@ -22190,7 +22190,8 @@
 	     */
 	    this._middleware.execute(Object.freeze({
 	      storeId: storeId,
-	      payload: payload
+	      payload: payload,
+	      store: this._registers[storeId]["store"]
 	    }));
 	  } catch (e) {
 	
@@ -22235,7 +22236,7 @@
 	 * 队列类
 	 */
 	function Queue(loop) {
-	  this.loop = typeof loop == 'undefined' ? false : true;
+	  this.loop = typeof loop == 'undefined' ? true : loop;
 	}
 	
 	/**
@@ -22308,7 +22309,10 @@
 	     */
 	    return '@@Fluder/StoreId/' + Math.random().toString(36).substring(7).split('').join('.');
 	}
-	
+	/**
+	 * 可以有中间件实现
+	 * @param  {error} e 错误对象
+	 */
 	function catchError(e) {
 	    var start = '\n\n@@Fluder/Start\n';
 	    var end = '\n@@Fluder/End\n\n';
@@ -22719,14 +22723,22 @@
 	var _src = __webpack_require__(180);
 	
 	exports.default = (0, _src.applyMiddleware)(function (data, next) {
+	    //日志log中间件
 	    var storeId = data.storeId;
 	    var payload = data.payload;
+	    var store = data.store;
 	
 	    console.info('actionType: "' + payload.type + '"');
 	    console.info('storeId: "' + storeId + '"');
 	    console.log(payload);
+	
+	    console.log('oldStore:');
+	    console.log(store.getAll && store.getAll());
 	    next();
+	    console.log('newStore:');
+	    console.log(store.getAll && store.getAll());
 	}).applyMiddleware(function (data, next) {
+	    //异步Action中间件
 	    /**
 	     * 把action里面的异步处理统一放在中间件
 	     */
@@ -22742,6 +22754,18 @@
 	            next(payload);
 	        });
 	    } else next(data); // 如果不包含 uri 字段，则不作任何处理
+	}).applyMiddleware(function (data, next) {
+	    //catchError 中间件
+	    var storeId = data.storeId;
+	    var payload = data.payload;
+	    var store = data.store;
+	
+	    try {
+	        return next();
+	    } catch (err) {
+	        console.error('Caught an exception!', err);
+	        throw err;
+	    }
 	});
 
 /***/ },
