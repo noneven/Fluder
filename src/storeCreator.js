@@ -34,7 +34,7 @@ function storeCreate(storeId, method, handlers) {
             this.removeListener(CHANGE_EVENT, callback);
         },
         removeAllChangeListener: function() {
-            this.removeAllListener()
+            this.removeAllListeners()
         }
     });
 
