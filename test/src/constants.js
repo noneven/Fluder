@@ -1,8 +1,0 @@
-
-module.exports = {
-	ADD_TODO: "ADD_TODO",
-  DEL_TODO: "DEL_TODO",
-  TOGGLE_TODO: "TOGGLE_TODO",
-  PUSH_KEYS: "PUSH_KEYS",
-  PUSH_VALUES: "PUSH_VALUES"
-};
