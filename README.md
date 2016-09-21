@@ -7,7 +7,7 @@ A unidirectional data flow tool based on flux.
 [![Build Status](https://travis-ci.org/coderwin/Fluder.svg?branch=master)](https://travis-ci.org/coderwin/Fluder)
 [![npm ver](https://img.shields.io/npm/v/fluder.svg?style=flat)](https://www.npmjs.com/package/fluder)
 [![npm dm](https://img.shields.io/npm/dm/Fluder.svg?style=flat-square)](https://www.npmjs.com/package/fluder)
-[![LICENSE](https://img.shields.io/npm/l/Fluder.svg)](https://www.npmjs.com/package/fluder)
+[![LICENSE](https://img.shields.io/npm/l/fluder.svg)](https://www.npmjs.com/package/fluder)
 
 
 ![fluder-design](./fluder-design.png)
