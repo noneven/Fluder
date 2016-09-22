@@ -83,5 +83,9 @@ describe('Fluder process tests\n', function() {
     });
   });
 
+  it('Store removeChangeListener/removeAllChangeListener is currently', function(){
+    todoStore.removeChangeListener(function(){})
+    todoStore.removeAllChangeListener()
+  });
 
 });

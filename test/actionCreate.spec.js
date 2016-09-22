@@ -24,6 +24,10 @@ describe('actionCreator tests', function() {
     }).to.throw(/id is reauired as creating a action!/);
   });
 
+  it('actionCreator no actionCreatorMap should not throw error,but return a empty object', function() {
+    expect(actionCreate('storeId')).to.be.empty;
+  });
+
   var actionMap = {
     "addTodo": function(){
       console.log('addTodo')
