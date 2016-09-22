@@ -17,7 +17,7 @@ function applyMiddleware(middleware) {
     }
     if (({}).toString.call(middleware) === '[object Array]') {
         for (var i = 0; i < middleware.length; i++) {
-            if (typeof middleware === 'function') {
+            if (typeof middleware[i] === 'function') {
                 applyMiddleware(middleware[i])
             }
         }
