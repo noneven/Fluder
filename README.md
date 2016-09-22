@@ -64,7 +64,7 @@ Fluder/actionStoreCreate
 
 ## 介绍
 
-![fluder-design](./fluder-design.png)
+![fluder-design](./design/fluder-design.png)
 
 ### Fluder Store
 
