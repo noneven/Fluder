@@ -3,6 +3,8 @@ node_js:
   - "6"
 script:
   - npm run test
+after_script:
+  - npm run cov
 branches:
   only:
     - master

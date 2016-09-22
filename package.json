@@ -23,14 +23,15 @@
     "react-dom": "^15.3.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.1",
-    "mocha": "^3.0.2",
+    "mocha": "^3.02",
     "chai": "^3.5.0"
   },
   "scripts": {
     "test": "mocha; mocha test/src;",
     "build": "webpack --config webpack.lib.config.js",
     "exampleVue": "cd example/todoVue; npm install; npm run dev",
-    "exampleReact": "cd example/todoReact; npm install; open index.html"
+    "exampleReact": "cd example/todoReact; npm install; open index.html",
+    "cov": "npm install -g istanbul; istanbul cover _mocha test/src test; cd coverage;"
   },
   "repository": {
     "type": "git",
