@@ -30,8 +30,7 @@
     "test": "mocha; mocha test/src;",
     "build": "webpack --config webpack.lib.config.js",
     "exampleVue": "cd example/todoVue; npm install; npm run dev",
-    "exampleReact": "cd example/todoReact; npm install; open index.html",
-    "cov": "npm install -g istanbul; istanbul cover _mocha test/src test; cd coverage;"
+    "exampleReact": "cd example/todoReact; npm install; open index.html"
   },
   "repository": {
     "type": "git",
