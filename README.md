@@ -11,8 +11,6 @@ A unidirectional data flow tool based on flux.
 [![LICENSE](https://img.shields.io/npm/l/fluder.svg)](https://www.npmjs.com/package/fluder)
 
 
-![fluder-design](./fluder-design.png)
-
 ## 安装
 
 npm: https://www.npmjs.com/package/fluder
@@ -65,6 +63,8 @@ Fluder/actionStoreCreate
 ```
 
 ## 介绍
+
+![fluder-design](./fluder-design.png)
 
 ### Fluder Store
 
