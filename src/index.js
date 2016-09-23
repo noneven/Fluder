@@ -3,7 +3,7 @@ var actionCreate = require('./actionCreator')
 var applyMiddleware = require('./applyMiddleware')
 var actionStoreCreate = require('./actionStoreCreator')
 
-module.exports =  {
+module.exports = {
   storeCreate: storeCreate,
   actionCreate: actionCreate,
   applyMiddleware: applyMiddleware,
