@@ -21945,39 +21945,42 @@
 	 * @return {object}          返回store对象
 	 */
 	function storeCreate(storeId, method, handlers) {
+	  /**
+	   * 不存在storeId
+	   */
+	  if (typeof storeId === 'undefined') {
+	    throw Error('id is reauired as create a store, and the id is the same of store!');
+	  }
+	  var CHANGE_EVENT = 'change';
+	  /**
+	   * 创建store，继承EventEmitter
+	   */
+	  var store = Object.assign(method, EventEmitter.prototype, {
 	    /**
-	     * 不存在storeId
+	     * 统一Store的EventEmitter调用方式，避免和全局EventEmitter混淆
+	     * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
+	     * 这里的局部优化是指全局Stores更新，触发的Store Handler较多，可以通过payload的数据过滤
 	     */
-	    if (typeof storeId == 'undefined') {
-	        throw Error('id is reauired as create a store, and the id is the same of store!');
+	    emitChange: function emitChange(payload, result) {
+	      this.emit(CHANGE_EVENT, payload, result);
+	    },
+	    addChangeListener: function addChangeListener(callback) {
+	      this.on(CHANGE_EVENT, callback);
+	    },
+	    removeChangeListener: function removeChangeListener(callback) {
+	      this.removeListener(CHANGE_EVENT, callback);
+	    },
+	    removeAllChangeListener: function removeAllChangeListener() {
+	      this.removeAllListeners();
 	    }
-	    var CHANGE_EVENT = 'change';
-	    /**
-	     * 创建store，继承EventEmitter
-	     */
-	    var store = Object.assign(method, EventEmitter.prototype, {
-	        /**
-	         * 统一Store的EventEmitter调用方式，避免和全局EventEmitter混淆
-	         * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
-	         * 这里的局部优化是指全局Stores更新，触发的Store Handler较多，可以通过payload的数据过滤
-	         */
-	        emitChange: function emitChange(payload, result) {
-	            this.emit(CHANGE_EVENT, payload, result);
-	        },
-	        addChangeListener: function addChangeListener(callback) {
-	            this.on(CHANGE_EVENT, callback);
-	        },
-	        removeChangeListener: function removeChangeListener(callback) {
-	            this.removeListener(CHANGE_EVENT, callback);
-	        },
-	        removeAllChangeListener: function removeAllChangeListener() {
-	            this.removeAllListeners();
-	        }
-	    });
+	  });
 	
-	    Fluder.register(storeId, { store: store, handlers: handlers });
+	  Fluder.register(storeId, {
+	    store: store,
+	    handlers: handlers
+	  });
 	
-	    return store;
+	  return store;
 	}
 	
 	module.exports = storeCreate;
@@ -22010,11 +22013,6 @@
 	var catchError = Tool.catchError;
 	
 	/**
-	 * custom Event
-	 */
-	var EventEmitter = __webpack_require__(185);
-	
-	/**
 	 * 构造函数
 	 * @return {object} 返回Fluder实例对象
 	 */
@@ -22038,12 +22036,10 @@
 	}
 	
 	Fluder.prototype._init = function () {
-	
 	  /**
 	   * 中间件，集中处理action payload和storeId
 	   */
 	  this._middleware = new Queue(true).after(function (payload) {
-	
 	    /**
 	     * 中间件队列执行完后触发Store handler的调用
 	     */
@@ -22057,7 +22053,6 @@
 	 * @return {void}           无返回值
 	 */
 	Fluder.prototype._invoke = function (payload) {
-	
 	  /**
 	   * storeId: 用于map到register里面注册的handler
 	   * @type {string}
@@ -22068,8 +22063,8 @@
 	   * store和它对应的handler
 	   * @type {object}
 	   */
-	  var store = this._registers[storeId]["store"];
-	  var handlers = this._registers[storeId]["handlers"];
+	  var store = this._registers[storeId]['store'];
+	  var handlers = this._registers[storeId]['handlers'];
 	
 	  /**
 	   * action payload
@@ -22084,15 +22079,14 @@
 	  var handler = handlers[payload.type];
 	
 	  if (typeof handler === 'function') {
-	
 	    /**
 	     * TODO
 	     * result应该为store数据的copy，暂时没做深度copy，后续把Store改写成Immutable数据结构
 	     * view-controller里面对result的修改不会影响到store里的数据
 	     */
 	    var result;
-	    var _result = handler.call(store, payload);
-	
+	    // var _result = handler.call(store, payload)
+	    handler.call(store, payload);
 	    /**
 	     * 可以没有返回值，只是set Store里面的值
 	     * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
@@ -22146,20 +22140,17 @@
 	 * @return {void}           无返回值
 	 */
 	Fluder.prototype.dispatch = function (storeId, payload) {
-	
 	  /**
 	   * 在当前Action触发的Store handler回调函数中再次发起了当前Action，这样会造成A-A循环调用,出现栈溢出
 	   */
-	  if (this._currentDispatch == storeId) {
-	
+	  if (this._currentDispatch === storeId) {
 	    throw Error('action ' + (payload.value && payload.value.actionType) + ' __invoke__ myself!');
 	  }
 	
 	  /**
 	   * 在当前Action触发的Store handler回调函数中再次触发了当前Action栈中的Action，出现A-B-C-A式循环调用，也会出现栈溢出
 	   */
-	  if (this._dispatchStack.indexOf(storeId) != -1) {
-	
+	  if (this._dispatchStack.indexOf(storeId) !== -1) {
 	    throw Error(this._dispatchStack.join(' -> ') + storeId + ' : action __invoke__ to a circle!');
 	  }
 	
@@ -22172,12 +22163,10 @@
 	   * Action的触发必须有ActionType，原因是ActionType和Store handlers Map的key一一对应
 	   */
 	  if (!payload.type) {
-	
 	    throw new Error('action type does not exist in \n' + JSON.stringify(payload, null, 2));
 	  }
 	
 	  try {
-	
 	    /**
 	     * 发出action的时候 统一走一遍中间件
 	     *
@@ -22191,10 +22180,9 @@
 	    this._middleware.execute(Object.freeze({
 	      storeId: storeId,
 	      payload: payload,
-	      store: this._registers[storeId]["store"]
+	      store: this._registers[storeId]['store']
 	    }));
 	  } catch (e) {
-	
 	    /**
 	     * 执行handler的时候出错end掉当前dispatch
 	     */
@@ -22236,7 +22224,7 @@
 	 * 队列类
 	 */
 	function Queue(loop) {
-	  this.loop = typeof loop == 'undefined' ? true : loop;
+	  this.loop = typeof loop === 'undefined' ? true : loop;
 	}
 	
 	/**
@@ -22244,7 +22232,9 @@
 	 * @param {Function} 排队函数
 	 */
 	Queue.prototype.enqueue = function (task) {
-	  //入队
+	  /**
+	   * 入队
+	   */
 	  queue.push(task);
 	  // Backup
 	  this.loop && _queue.push(task);
@@ -22256,7 +22246,6 @@
 	 * @param {Array} 可为空，替换队列中的排队函数
 	 */
 	Queue.prototype.execute = function (data, tasks) {
-	
 	  /**
 	   * 如果tasks存在则忽略排队函数
 	   */
@@ -22273,7 +22262,6 @@
 	    task = tasks.shift();
 	    task(data, this.execute.bind(this, data, tasks));
 	  } else {
-	
 	    /**
 	     * 队列为空，执行完成
 	     */
@@ -22304,25 +22292,26 @@
 	'use strict';
 	
 	function unique() {
-	    /**
-	     * Fluder Store唯一ID
-	     */
-	    return '@@Fluder/StoreId/' + Math.random().toString(36).substring(7).split('').join('.');
+	  /**
+	   * Fluder Store唯一ID
+	   */
+	  return '@@Fluder/StoreId/' + Math.random().toString(36).substring(7).split('').join('.');
 	}
+	
 	/**
 	 * 可以有中间件实现
 	 * @param  {error} e 错误对象
 	 */
 	function catchError(e) {
-	    var start = '\n\n@@Fluder/Start\n';
-	    var end = '\n@@Fluder/End\n\n';
+	  var start = '\n\n@@Fluder/Start\n';
+	  var end = '\n@@Fluder/End\n\n';
 	
-	    throw Error(start + 'Error: ' + (e.line ? e.line + '行' : '') + (e.column ? e.column + '列' : '') + e.message + end);
+	  throw Error(start + 'Error: ' + (e.line ? e.line + '行' : '') + (e.column ? e.column + '列' : '') + e.message + end);
 	}
 	
 	module.exports = {
-	    unique: unique,
-	    catchError: catchError
+	  unique: unique,
+	  catchError: catchError
 	};
 
 /***/ },
@@ -22620,16 +22609,18 @@
 	  /**
 	   * 不存在storeId
 	   */
-	  if (typeof storeId == 'undefined') throw Error('id is reauired as creating a action!');
+	  if (typeof storeId === 'undefined') {
+	    throw Error('id is reauired as creating a action!');
+	  }
 	  /**
 	   * action handler为空,相当于没有action
 	   */
-	  if (!actionCreators || Object.keys(actionCreators).length == 0) {
+	  if (!actionCreators || Object.keys(actionCreators).length === 0) {
 	    console.warn('action handler\'s length is 0, need you have a action handler?');
 	  }
 	
-	  var creator,
-	      actions = {};
+	  var creator;
+	  var actions = {};
 	  /**
 	   * 遍历创建Action
 	   */
@@ -22665,27 +22656,28 @@
 	 * @param  {function} middleware action统一流入中间件
 	 * 这里和redux类似，和express等框架对请求的处理一样
 	 */
-	
 	function applyMiddleware(middleware) {
-	    if (typeof middleware === 'function') {
-	        /**
-	         * 中间件是一个队列，一个action发出时
-	         * 需要排队等到所有的中间件 完成才会触发对应的handler
-	         * @param  {function} middleware
-	         */
-	        Fluder.enqueue(middleware);
+	  if (typeof middleware === 'function') {
+	    /**
+	     * 中间件是一个队列，一个action发出时
+	     * 需要排队等到所有的中间件 完成才会触发对应的handler
+	     * @param  {function} middleware
+	     */
+	    Fluder.enqueue(middleware);
+	  }
+	  if ({}.toString.call(middleware) === '[object Array]') {
+	    for (var i = 0; i < middleware.length; i++) {
+	      if (typeof middleware[i] === 'function') {
+	        applyMiddleware(middleware[i]);
+	      }
 	    }
-	    if ({}.toString.call(middleware) === '[object Array]') {
-	        for (var i = 0; i < middleware.length; i++) {
-	            if (typeof middleware === 'function') {
-	                applyMiddleware(middleware[i]);
-	            }
-	        }
-	    }
-	    //支持链式中间件
-	    return {
-	        applyMiddleware: applyMiddleware
-	    };
+	  }
+	  /**
+	   * 支持链式中间件
+	   */
+	  return {
+	    applyMiddleware: applyMiddleware
+	  };
 	}
 	module.exports = applyMiddleware;
 
@@ -22701,11 +22693,11 @@
 	var actionCreate = __webpack_require__(186);
 	
 	function actionStoreCreate(actionCreators, method, handlers, storeId) {
-		storeId = storeId || unique();
-		return {
-			actionor: actionCreate(storeId, actionCreators),
-			storeor: storeCreate(storeId, method, handlers)
-		};
+	  storeId = storeId || unique();
+	  return {
+	    actionor: actionCreate(storeId, actionCreators),
+	    storeor: storeCreate(storeId, method, handlers)
+	  };
 	}
 	
 	module.exports = actionStoreCreate;
