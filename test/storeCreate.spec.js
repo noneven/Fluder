@@ -21,12 +21,28 @@ describe('storeCreator tests', function () {
       console.log('ADD_TODO')
     }
   })
+  var store1 = storeCreate({
+    addTodo: function(){
+      console.log("action")
+    }
+  }, {
+    getAll: function () {
+      console.log('getAll')
+    }
+  }, {
+    'ADD_TODO': function () {
+      console.log('ADD_TODO')
+    }
+  })
+
 
   it('storeCreator should return a object', function () {
     expect(store).to.be.an('object')
+    expect(store1).to.be.an('object')
   })
 
   it('storeCreator should return a object which have added methods and emitter', function () {
     expect(store).to.have.property('getAll')
+    expect(store1).to.have.property('getAll')
   })
 })

@@ -2,7 +2,7 @@ var actionCreate = require('../../src/actionCreator')
 var constants = require('./constants')
 const FORM_ID = 'FORMID'
 
-module.exports = actionCreate(FORM_ID, {
+module.exports = actionCreate({
   pushKey: (key) => ({
     type: `${FORM_ID}/${constants.PUSH_KEYS}`,
     value: key

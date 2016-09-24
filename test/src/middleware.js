@@ -6,12 +6,17 @@ var applyMiddleware = require('../../src/applyMiddleware')
 module.exports = applyMiddleware((data, next) => {
   let {
     storeId,
-    payload
+    payload,
+    store
   } = data
   console.log('--------------middleware loggor------------------')
   console.info(`actionType: \"${payload.type}\"`)
   console.info(`storeId: \"${storeId}\"`)
   console.log(payload)
-  console.log('--------------middleware loggor------------------\n')
+  console.log('old store')
+  console.log(store.getAll && store.getAll())
   next()
+  console.log('new store')
+  console.log(store.getAll && store.getAll())
+  console.log('--------------middleware loggor------------------\n')
 })

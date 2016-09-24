@@ -16,14 +16,15 @@ function objectValues (o) {
 }
 
 describe('actionCreator tests', function () {
-  it('actionCreator no storeId should throw error', function () {
-    expect(function () {
-      actionCreate()
-    }).to.throw(/id is reauired as creating a action!/)
-  })
+  // it('actionCreator no storeId should throw error', function () {
+  //   expect(function () {
+  //     actionCreate()
+  //   }).to.throw(/id is reauired as creating a action!/)
+  // })
 
   it('actionCreator no actionCreatorMap should not throw error,but return a empty object', function () {
-    expect(actionCreate('storeId')).to.be.empty;
+    expect(actionCreate()).to.be.empty;
+    expect(actionCreate({})).to.be.empty;
   })
 
   var actionMap = {
@@ -32,11 +33,13 @@ describe('actionCreator tests', function () {
     }
   }
   it('actionCreator should return a object', function () {
-    expect(actionCreate('storeId', actionMap)).to.be.an('object')
+    expect(actionCreate(actionMap)).to.be.an('object')
+    expect(actionCreate(actionMap, 'storeId')).to.be.an('object')
   })
 
   it('actionCreator should return a object contact enter object', function () {
-    expect(actionCreate('storeId', actionMap)).to.have.property('addTodo')
+    expect(actionCreate(actionMap)).to.have.property('addTodo')
+    expect(actionCreate(actionMap, 'storeId')).to.have.property('addTodo')
   })
 
   it('actionCreator return a object, it\'s values should function allways', function () {

@@ -1,8 +1,9 @@
 var storeCreate = require('../../src/storeCreator')
 var constants = require('./constants')
 const TODOAPP_ID = 'TODOAPP'
+const todoAction = require('./todoAction')
 var items = []
-module.exports = storeCreate(TODOAPP_ID, {
+module.exports = storeCreate(todoAction, {
   /**
    * store只提供读权限
    */

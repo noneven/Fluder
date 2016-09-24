@@ -1,10 +1,11 @@
 var storeCreate = require('../../src/storeCreator')
 var constants = require('./constants')
 const FORM_ID = 'FORMID'
+const formAction = require('./formAction')
 let keys = []
 let values = []
 
-module.exports = storeCreate(FORM_ID, {
+module.exports = storeCreate(formAction, {
   /**
    * store只提供读权限
    */

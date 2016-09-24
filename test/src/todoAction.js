@@ -2,7 +2,7 @@ var actionCreate = require('../../src/actionCreator')
 var constants = require('./constants')
 const TODOAPP_ID = 'TODOAPP'
 
-module.exports = actionCreate(TODOAPP_ID, {
+module.exports = actionCreate({
   addTodo: (item) => ({
     type: `${TODOAPP_ID}/${constants.ADD_TODO}`,
     value: item

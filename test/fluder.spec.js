@@ -9,11 +9,13 @@ describe('Fluder tests', function () {
   it('Fluder should be new correctly: \n      should have register/enqueue/dispatch" prototype methods;\n      should have "_registers/_middleware/_dispatchStack" constructor property.', function () {
     expect(Fluder).to.be.an('object')
 
-    ['register', 'enqueue', 'dispatch'].forEach(function (item) {
+    var __proto__Arr = ['register', 'enqueue', 'dispatch'];
+    var constructorArr = ['_registers', '_middleware', '_dispatchStack'];
+
+    __proto__Arr.forEach(function (item) {
       expect(Fluder.__proto__).to.have.property(item)
     })
-
-    ['_registers', '_middleware', '_dispatchStack'].forEach(function (item) {
+    constructorArr.forEach(function (item) {
       expect(Fluder).to.have.property(item)
     })
   })
