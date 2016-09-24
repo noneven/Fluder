@@ -5,9 +5,7 @@ function unique () {
   return '@@Fluder/StoreId/' +
     Math.random()
     .toString(36)
-    .substring(7)
-    .split('')
-    .join('.')
+    .substring(2)
 }
 
 /**
@@ -26,7 +24,18 @@ function catchError (e) {
     end)
 }
 
+/**
+ * 获取数据类型
+ * @param  {*} p enter data
+ * @return {string} 返回的字符串数据
+ */
+function getType (p) {
+	var tostring = Object.prototype.toString.call(p);
+	return tostring.substring(8,tostring.length-1).toLowerCase()
+}
+
 module.exports = {
   unique: unique,
+	getType: getType,
   catchError: catchError
 }

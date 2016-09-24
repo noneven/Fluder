@@ -5,13 +5,7 @@ var Fluder = require('./fluder')
  * @param  {object} actionCreators 需要创建的action对象
  * @return {object} 返回一个actions对象,具有调用action触发store change的能力
  */
-function actionCreate (storeId, actionCreators) {
-  /**
-   * 不存在storeId
-   */
-  if (typeof storeId === 'undefined') {
-    throw Error('id is reauired as creating a action!')
-  }
+function actionCreate (actionCreators, storeId) {
   /**
    * action handler为空,相当于没有action
    */
@@ -29,14 +23,14 @@ function actionCreate (storeId, actionCreators) {
     /**
      * 创建闭包，让creator不被回收
      */
-    actions[name] = function (storeId, creator) {
+    actions[name] = function (creator) {
       return function () {
         /**
          * action里面发出改变store消息
          */
-        return this.dispatch(storeId, creator.apply(null, arguments))
+        return this.dispatch(storeId || actions.__id__, creator.apply(null, arguments))
       }.bind(this)
-    }.call(Fluder, storeId, creator)
+    }.call(Fluder, creator)
   }
   return actions
 }

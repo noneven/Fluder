@@ -6,7 +6,7 @@ var actionCreate = require('./actionCreator')
 function actionStoreCreate (actionCreators, method, handlers, storeId) {
   storeId = (storeId || unique())
   return {
-    actionor: actionCreate(storeId, actionCreators),
+    actionor: actionCreate(actionCreators, storeId),
     storeor: storeCreate(storeId, method, handlers)
   }
 }
