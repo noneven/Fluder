@@ -1,16 +1,16 @@
 /**
  * STORE部分
  */
-import {storeCreate} from '../../../src'
+import {storeCreate,actionStoreCreate} from '../../../src'
+
 /**
  * 启用中间件
  */
 import applyMiddleware from '../dispatcher'
 import constants from '../constants/constants';
+import todoAction from '../actions/todoAction';
 
-/**
- * STORE唯一标示，和actionId一一对应
- */
+//命名空间，可以没有
 var TODOID = constants.TODO_STORE_ID;
 /**
  * store数据(states)存储
@@ -48,7 +48,7 @@ let API = {
  * 注意这里面的一些方法没有用arrow function
  * 原因是函数内部的this是动态绑定到store上面的
  */
-var todoStore = storeCreate(TODOID, {
+var todoStore = storeCreate(todoAction, {
     /**
      * STORE APIs
      */
@@ -92,4 +92,5 @@ var todoStore = storeCreate(TODOID, {
         return items;
     }
 });
+
 export default todoStore;

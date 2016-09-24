@@ -2,7 +2,7 @@ import {actionCreate} from '../../../src';
 
 import constants from '../constants/constants';
 const TODOID = constants.TODO_STORE_ID;
-export default actionCreate(TODOID,{
+export default actionCreate({
 	getAll:()=>({
 		type: `${TODOID}/${constants.GET_ALL}`,
 	}),

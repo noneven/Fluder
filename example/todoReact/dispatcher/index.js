@@ -11,13 +11,13 @@ export default applyMiddleware(function(data, next) {
     } = data;
     console.info(`actionType: \"${payload.type}\"`);
     console.info(`storeId: \"${storeId}\"`);
-    console.log(payload);
+    console.info(`payload: ${JSON.stringify(payload)}`);
 
     console.log('oldStore:');
-    console.log(store.getAll && store.getAll());
+		console.log(store.getAll && JSON.stringify(store.getAll()));
     next();
     console.log('newStore:');
-    console.log(store.getAll && store.getAll());
+    console.log(store.getAll && JSON.stringify(store.getAll()));
 
 }).applyMiddleware(function(data, next) {
     //异步Action中间件
