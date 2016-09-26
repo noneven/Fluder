@@ -1,19 +1,25 @@
 var Fluder = require('./fluder')
 
 /**
- * 中间件[对外API]
- * @param  {function} middleware action统一流入中间件
- * 这里和redux类似，和express等框架对请求的处理一样
+ * Middleware [export API]
+ *
+ * with redux-middleware similar,
+ * and the same with express handle the request
+ *
+ * @param  {function} middleware action use the middleware function
  */
 function applyMiddleware (middleware) {
   if (typeof middleware === 'function') {
     /**
-     * 中间件是一个队列，一个action发出时
-     * 需要排队等到所有的中间件 完成才会触发对应的handler
+     * Middleware is a Queue, as action sending,
+     * need the queue[all middleware] is finished, the handler will invoke
      * @param  {function} middleware
      */
     Fluder.enqueue(middleware)
   }
+  /**
+   * you can participate the param with array
+   */
   if (({}).toString.call(middleware) === '[object Array]') {
     for (var i = 0; i < middleware.length; i++) {
       if (typeof middleware[i] === 'function') {
@@ -22,7 +28,7 @@ function applyMiddleware (middleware) {
     }
   }
   /**
-   * 支持链式中间件
+   * chain middleware
    */
   return {
     applyMiddleware: applyMiddleware

@@ -18,42 +18,39 @@ function Queue (loop) {
 }
 
 /**
- * 入队
- * @param {Function} 排队函数
+ * enter queue
+ * @param {Function} middleware task
  */
 Queue.prototype.enqueue = function (task) {
-  /**
-   * 入队
-   */
   queue.push(task)
-    // Backup
+  // queue backup
   this.loop && _queue.push(task)
 }
 
 /**
- * 执行队列函数
- * @param {Object} 可为空，在排队函数中流通的data
- * @param {Array} 可为空，替换队列中的排队函数
+ * execute the handle function
+ * @param {Object} not required, in middleware handle function can be empty
+ * @param {Array}  not required, it's used to replace the middleware task
  */
 Queue.prototype.execute = function (data, tasks) {
   /**
-   * 如果tasks存在则忽略排队函数
+   * if tasks exist, replace the middleware tasks
    */
   tasks = tasks || queue
   var task
 
   /**
-   * 队列不为空
+   * tasks not be empty
    */
   if (tasks.length) {
     /**
-     * 出队
+     * dequeue
      */
     task = tasks.shift()
     task(data, this.execute.bind(this, data, tasks))
   } else {
     /**
-     * 队列为空，执行完成
+     * execute finished
      */
     task = null
     this.tasksAchieved(data)
@@ -64,9 +61,9 @@ Queue.prototype.execute = function (data, tasks) {
 }
 
 /**
- * 队列中排队函数执行完成后的回调函数
+ * middleware task execute achieved will be execute the callback
  * @param  {Function} fn
- * @return {object}   返回队列实例，mock Promise
+ * @return {object}   return the queue instance，mock Promise
  */
 Queue.prototype.after = function (fn) {
   this.tasksAchieved = fn

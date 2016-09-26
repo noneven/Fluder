@@ -1,6 +1,6 @@
 function unique () {
   /**
-   * Fluder Store唯一ID
+   * Fluder Store id
    */
   return '@@Fluder/StoreId/' +
     Math.random()
@@ -9,8 +9,8 @@ function unique () {
 }
 
 /**
- * 可以有中间件实现
- * @param  {error} e 错误对象
+ * middleware can be realize
+ * @param  {error} e error object
  */
 function catchError (e) {
   var start = '\n\n@@Fluder/Start\n'
@@ -25,17 +25,17 @@ function catchError (e) {
 }
 
 /**
- * 获取数据类型
+ * get data object
  * @param  {*} p enter data
- * @return {string} 返回的字符串数据
+ * @return {string} return type
  */
 function getType (p) {
-	var tostring = Object.prototype.toString.call(p);
-	return tostring.substring(8,tostring.length-1).toLowerCase()
+  var tostring = Object.prototype.toString.call(p)
+  return tostring.substring(8, tostring.length - 1).toLowerCase()
 }
 
 module.exports = {
   unique: unique,
-	getType: getType,
+  getType: getType,
   catchError: catchError
 }

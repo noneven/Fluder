@@ -20,54 +20,56 @@ var Tool = require('./tools')
 var catchError = Tool.catchError
 
 /**
- * 构造函数
- * @return {object} 返回Fluder实例对象
+ * constructor
+ * @return {object} the Fluder object
  */
 function Fluder () {
   /**
-   * store handlers 注册Map
+   * store handlers register map
    * @type {Object}
    */
   this._registers = {}
 
   /**
-   * dispatch栈
+   * dispatch stack
    * @type {Array}
    */
   this._dispatchStack = []
 
   /**
-   * 初始化
+   * init
    */
   this._init()
 }
 
 Fluder.prototype._init = function () {
   /**
-   * 中间件，集中处理action payload和storeId
+   * init middleware to handle the action
    */
   this._middleware = new Queue(true).after(function (payload) {
     /**
-     * 中间件队列执行完后触发Store handler的调用
+     * after middleware finished will invoke store handler
      */
     this._invoke(payload)
   }.bind(this))
 }
 
 /**
- * action对handler的调用(内部调用)
- * @param  {object} payload 此时的payload包含action和action对应的storeId
- * @return {void}           无返回值
+ * action invoke store change
+ * this payload contain the storeId、the action payload and the store
+ *
+ * @param  {object} payload storeId/payload/store
+ * @return {void}           return null
  */
 Fluder.prototype._invoke = function (payload) {
   /**
-   * storeId: 用于map到register里面注册的handler
+   * storeId: map the register store
    * @type {string}
    */
   var storeId = payload.storeId
 
   /**
-   * store和它对应的handler
+   * store and the store handlers
    * @type {object}
    */
   var store = this._registers[storeId]['store']
@@ -80,32 +82,35 @@ Fluder.prototype._invoke = function (payload) {
   payload = payload.payload
 
   /**
-   * 在当前storeId的store Map到对应的handler
-   * @type {function}
+   * map handler in handlers with actionType
+   * @type {string}
    */
   var handler = handlers[payload.type]
 
   if (typeof handler === 'function') {
     /**
      * TODO
-     * result应该为store数据的copy，暂时没做深度copy，后续把Store改写成Immutable数据结构
-     * view-controller里面对result的修改不会影响到store里的数据
+     * result should be the store-state copy
+     * the state is immutable datastructures will be better
+     *
+     * view-controller[Vue/React components] can't revise the store state
      */
+
     var result
-      // var _result = handler.call(store, payload)
+    // var _result = handler.call(store, payload)
+    /**
+     * the result is not required, only set store state
+     * payload to store change callback to render optimization and local rending
+     */
     handler.call(store, payload)
-      /**
-       * 可以没有返回值，只是set Store里面的值
-       * 这里把payload传给change的Store，可以做相应的渲染优化[局部渲染]
-       */
-      // if (result !== undefined) {
+    // if (result !== undefined)
     store.emitChange(payload, result)
-      // }
   }
 }
 
 /**
- * 更新Action栈以及记录当前ActionID
+ * start dispatch to update the stack[push storeId]
+ * and record the current dispatch storeId
  */
 Fluder.prototype._startDispatch = function (storeId) {
   this._dispatchStack || (this._dispatchStack = [])
@@ -114,7 +119,8 @@ Fluder.prototype._startDispatch = function (storeId) {
 }
 
 /**
- * Action执行完更新Action栈以及删除当前ActionID
+ * handler finished to update the stack[pop stack]
+ * and delete the current dispatch
  */
 Fluder.prototype._endDispatch = function () {
   this._dispatchStack.pop()
@@ -122,52 +128,53 @@ Fluder.prototype._endDispatch = function () {
 }
 
 /**
- * Store和handler注册
- * @param  {string} storeId store/action唯一标示
- * @param  {object} storeHandler  store和handler
- * @return {void}           无返回值
+ * store and handler register
+ * @param  {string} storeId store/action unique
+ * @param  {object} storeHandler  store/handler collection
+ * @return {void}   return null
  */
 Fluder.prototype.register = function (storeId, storeHandler) {
   this._registers[storeId] = storeHandler
 }
 
 /**
- * 中间件入队
- * @param  {function} middleware  中间件处理函数
- * @return {void}           无返回值
+ * middleware queue
+ * @param  {function} middleware  middleware handle function
+ * @return {void}     return null
  */
 Fluder.prototype.enqueue = function (middleware) {
   this._middleware.enqueue(middleware)
 }
 
 /**
- * 触发action(内部调用)
- * @param  {string} storeId store/action唯一标示
- * @param  {object} action  action数据
- * @return {void}           无返回值
+ * dispatch action
+ * @param  {string} storeId store/action unique
+ * @param  {object} action  action data
+ * @return {void}           return null
  */
 Fluder.prototype.dispatch = function (storeId, payload) {
   /**
-   * 在当前Action触发的Store handler回调函数中再次发起了当前Action，这样会造成A-A循环调用,出现栈溢出
+   * in current action invoke the store change sending the same action
+   * which bring about the iteration of A-A, it will mack stackoverflow
    */
   if (this._currentDispatch === storeId) {
     throw Error('action ' + (payload.value && payload.value.actionType) + ' __invoke__ myself!')
   }
 
   /**
-   * 在当前Action触发的Store handler回调函数中再次触发了当前Action栈中的Action，出现A-B-C-A式循环调用，也会出现栈溢出
+   * in current action invoke the store change
+   * sending the action in dispatch stack which bring about
+   * the iteration of A-B-A/A-B-C-A, it will also mack stackoverflow
    */
   if (this._dispatchStack.indexOf(storeId) !== -1) {
     throw Error(this._dispatchStack.join(' -> ') + storeId + ' : action __invoke__ to a circle!')
   }
 
-  /**
-   * 更新Action栈以及记录当前ActionID
-   */
   this._startDispatch(storeId)
 
   /**
-   * Action的触发必须有ActionType，原因是ActionType和Store handlers Map的key一一对应
+   * actionType in action required，because the actionType
+   * will be connect the store handler
    */
   if (!payload.type) {
     throw new Error('action type does not exist in \n' + JSON.stringify(payload, null, 2))
@@ -175,7 +182,7 @@ Fluder.prototype.dispatch = function (storeId, payload) {
 
   try {
     /**
-     * 发出action的时候 统一走一遍中间件
+     * action sending will enter the Middleware
      *
      * {
      *     storeId,
@@ -191,19 +198,18 @@ Fluder.prototype.dispatch = function (storeId, payload) {
     }))
   } catch (e) {
     /**
-     * 执行handler的时候出错end掉当前dispatch
+     * handler execute error, end current dispatch
+     * for not blocking the process
      */
     this._endDispatch()
 
     /**
-     * 抛出错误信息
+     * catch the error
+     * you can use catchError middleware to handle
      */
     catchError(e)
   }
 
-  /**
-   * Action执行完更新Action栈以及删除当前ActionID
-   */
   this._endDispatch()
 }
 

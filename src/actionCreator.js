@@ -1,13 +1,14 @@
 var Fluder = require('./fluder')
 /**
- * 创建action[对外API]
- * @param  {string} storeId  该action作用于那个store,和store的storeId一一对应
- * @param  {object} actionCreators 需要创建的action对象
- * @return {object} 返回一个actions对象,具有调用action触发store change的能力
+ *  create action [export API]
+ *  return the actions will dispatch the store change
+ * @param  {object} - actionCreators [generate action]
+ * @param  {string} - storeId  [not required, action and store connect with the unique id, if no, store will create a __id__ with the action]
+ * @return {object} - actionor
  */
 function actionCreate (actionCreators, storeId) {
   /**
-   * action handler为空,相当于没有action
+   * action handler empty
    */
   if (!actionCreators || Object.keys(actionCreators).length === 0) {
     console.warn('action handler\'s length is 0, need you have a action handler?')
@@ -16,17 +17,16 @@ function actionCreate (actionCreators, storeId) {
   var creator
   var actions = {}
   /**
-   * 遍历创建Action
+   * loop create action
    */
   for (var name in actionCreators) {
     creator = actionCreators[name]
-    /**
-     * 创建闭包，让creator不被回收
-     */
+
     actions[name] = function (creator) {
       return function () {
         /**
-         * action里面发出改变store消息
+         * action dispatch the store change with the storeId
+         * or the action hidden __id__
          */
         return this.dispatch(storeId || actions.__id__, creator.apply(null, arguments))
       }.bind(this)
