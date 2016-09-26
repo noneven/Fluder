@@ -6,14 +6,14 @@ var Fluder = require('./fluder')
  * with redux-middleware similar,
  * and the same with express handle the request
  *
- * @param  {function} middleware action use the middleware function
+ * @param  {function} - middleware action use the middleware function
  */
 function applyMiddleware (middleware) {
   if (typeof middleware === 'function') {
     /**
      * Middleware is a Queue, as action sending,
      * need the queue[all middleware] is finished, the handler will invoke
-     * @param  {function} middleware
+     * @param  {function} - middleware
      */
     Fluder.enqueue(middleware)
   }

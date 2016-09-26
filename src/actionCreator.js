@@ -3,7 +3,8 @@ var Fluder = require('./fluder')
  *  create action [export API]
  *  return the actions will dispatch the store change
  * @param  {object} - actionCreators [generate action]
- * @param  {string} - storeId  [not required, action and store connect with the unique id, if no, store will create a __id__ with the action]
+ * @param  {string} - storeId  [not required, action and store
+ * connect with the unique id, if no, store will create a __id__ with the action]
  * @return {object} - actionor
  */
 function actionCreate (actionCreators, storeId) {
