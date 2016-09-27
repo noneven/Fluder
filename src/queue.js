@@ -1,17 +1,17 @@
 /**
- * 队列
+ * queue
  * @type {Array}
  */
 var queue = []
 
 /**
- * 队列备份
+ * queue backup
  * @type {Array}
  */
 var _queue = []
 
 /**
- * 队列类
+ * queue class
  */
 function Queue (loop) {
   this.loop = (typeof loop === 'undefined') ? true : loop
