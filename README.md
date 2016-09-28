@@ -17,7 +17,7 @@
 <td>
 actionCreator
 <pre>
-export default actionCreate({
+export actionCreate({
     addTodo:(item)=>({
       type: constants.ADD_TODO,
       value: item
@@ -29,7 +29,7 @@ export default actionCreate({
 storeCreator
 <pre>
 let items = [];
-export default storeCreate(todoAction, {
+export storeCreate(todoAction, {
   getAll: function(){
     return items
   }
