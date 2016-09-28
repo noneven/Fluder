@@ -10,6 +10,81 @@
 [![npm dm](https://img.shields.io/npm/dm/Fluder.svg?style=flat-square)](https://www.npmjs.com/package/fluder)
 [![LICENSE](https://img.shields.io/npm/l/fluder.svg)](https://www.npmjs.com/package/fluder)
 
+## 10秒了解Fluder
+
+<div style="display:flex;flex-direction:row">
+<div style="flex:1">
+* actionCreator
+
+```javascript
+export default actionCreate({
+    addTodo:(item)=>({
+      type: constants.ADD_TODO,
+      value: item
+    })
+})
+```
+</div>
+
+<div style="flex:1">
+* storeCreator
+
+```javascript
+let items = [];
+export default storeCreate(todoAction, {
+  getAll: function(){
+    return items
+  }
+},{
+  [constants.ADD_TODO]: function(payload){
+    push(payload.value)
+    return items
+  }
+})
+function push(item){
+  items.push(item)
+}
+```
+</div>
+</div>
+
+* React Component
+
+```javascript
+componentDidMount(){
+  todoStore.addChangeListener(()=>{
+    this.setState({
+      items: todoStore.getAll()
+    })
+  })
+}
+addTodo(e){
+  todoAction.addTodo({
+    text: e.target.value,
+    done: false
+  });
+}
+```
+* Vue Component
+
+```javascript
+methods:{
+  addTodo(e){
+    todoAction.addTodo({
+      text: e.target.value,
+      done: false
+    });
+  }
+},
+created (){
+  todoStore.addChangeListener(()=>{
+    this.setState({
+      items: todoStore.getAll()
+    })
+  })
+}
+```
+
 主要解决的痛点如下:
 
 * 1、Redux对没有函数式编程经验的人来说不好理解，很难用好，
