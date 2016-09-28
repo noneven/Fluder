@@ -12,20 +12,22 @@
 
 ## 10秒了解Fluder
 
-
-* actionCreator
-
-```javascript
+<table>
+<tr>
+<td>
+actionCreator
+<pre>
 export default actionCreate({
     addTodo:(item)=>({
       type: constants.ADD_TODO,
       value: item
     })
 })
-```
-* storeCreator
-
-```javascript
+</pre>
+</td>
+<td>
+storeCreator
+<pre>
 let items = [];
 export default storeCreate(todoAction, {
   getAll: function(){
@@ -40,11 +42,11 @@ export default storeCreate(todoAction, {
 function push(item){
   items.push(item)
 }
-```
-
-* React Component
-
-```javascript
+</pre>
+</td>
+<td>
+React Component
+<pre>
 componentDidMount(){
   todoStore.addChangeListener(()=>{
     this.setState({
@@ -58,10 +60,12 @@ addTodo(e){
     done: false
   });
 }
-```
-* Vue Component
+</pre>
+</td>
 
-```javascript
+<td>
+Vue Component
+<pre>
 methods:{
   addTodo(e){
     todoAction.addTodo({
@@ -77,7 +81,11 @@ created (){
     })
   })
 }
-```
+</pre>
+</td>
+</tr>
+
+</table>
 
 主要解决的痛点如下:
 
