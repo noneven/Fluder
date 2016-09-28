@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html lang="" >
     <head>
-        <title>Fluer · 基于Flux的的单向数据流工具 · GitBook</title>
+        <title>1、简介 · GitBook</title>
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -336,6 +336,94 @@
 </li>
 <li>&#x6CA1;&#x6709;&#x6846;&#x67B6;&#x9650;&#x5236;/React&#x3001;Vue&#x5B8C;&#x7F8E;&#x4F7F;&#x7528;
 </li></ul>
+<h2 id="10&#x79D2;&#x4E86;&#x89E3;fluder">10&#x79D2;&#x4E86;&#x89E3;Fluder</h2><table>
+<tr>
+<td>
+actionCreator
+<pre>
+export actionCreate({
+    addTodo:(item)=&gt;({
+      type: constants.ADD_TODO,
+      value: item
+    })
+})
+</pre>
+</td>
+<td>
+storeCreator
+<pre>
+let items = [];
+export storeCreate(todoAction, {
+  getAll: function(){
+    return items
+  }
+},{
+  [constants.ADD_TODO]: function(payload){
+    push(payload.value)
+    return items
+  }
+})
+function push(item){
+  items.push(item)
+}
+</pre>
+</td>
+<td>
+React Component
+<pre>
+componentDidMount(){
+  todoStore.addChangeListener(()=&gt;{
+    this.setState({
+      items: todoStore.getAll()
+    })
+  })
+}
+addTodo(e){
+  todoAction.addTodo({
+    text: e.target.value,
+    done: false
+  });
+}
+</pre>
+</td>
+
+<td>
+Vue Component
+<pre>
+methods:{
+  addTodo(e){
+    todoAction.addTodo({
+      text: e.target.value,
+      done: false
+    });
+  }
+},
+created (){
+  todoStore.addChangeListener(()=&gt;{
+    this.setState({
+      items: todoStore.getAll()
+    })
+  })
+}
+</pre>
+</td>
+</tr>
+
+</table>
+
+
+
+<h2 id="&#x4E3B;&#x8981;&#x89E3;&#x51B3;&#x7684;&#x75DB;&#x70B9;&#x5982;&#x4E0B;">&#x4E3B;&#x8981;&#x89E3;&#x51B3;&#x7684;&#x75DB;&#x70B9;&#x5982;&#x4E0B;:</h2><ul><li>1&#x3001;Redux&#x5BF9;&#x6CA1;&#x6709;&#x51FD;&#x6570;&#x5F0F;&#x7F16;&#x7A0B;&#x7ECF;&#x9A8C;&#x7684;&#x4EBA;&#x6765;&#x8BF4;&#x4E0D;&#x597D;&#x7406;&#x89E3;&#xFF0C;&#x5F88;&#x96BE;&#x7528;&#x597D;&#xFF0C;
+</li>
+<li>2&#x3001;Redux&#x7684;&#x6811;&#x5F62;Store&#x9700;&#x8981;&#x505A;&#x592A;&#x591A;&#x7684;shouldComponentUpdate&#xFF0C;
+</li>
+<li>3&#x3001;Redux&#x63A8;&#x5D07;state&#x4E0D;&#x53EF;&#x53D8;
+</li></ul>
+<pre><code class="lang-javascript">state = <span class="hljs-built_in">Object</span>.assign({}, state)
+state.count++
+<span class="hljs-keyword">return</span> state</code></pre>
+<p>&#x4F7F;&#x5F97;Redux&#x5728;Vue&#x4E0A;&#x4F7F;&#x7528;&#x5F88;&#x5C34;&#x5C2C;(vm&#x5BF9;state&#x7684;&#x76D1;&#x542C;&#x5931;&#x6548;)&#xFF0C;</p><ul><li>4&#x3001;&#x5176;&#x4ED6;&#x7EBF;&#x6027;Store&#x7684;Flux&#x5B9E;&#x73B0;&#x4E2D; Action =&gt; Store&#x89E6;&#x53D1;change&#x66F4;&#x65B0;view&#x7684;&#x6210;&#x672C;&#x9AD8;&#xFF0C;Fluder&#x7528;id&#x628A;Action-Store&#x5173;&#x8054;&#x8D77;&#x6765;&#x63D0;&#x9AD8;Action&#x5230;&#x66F4;&#x65B0;View&#x7684;&#x6210;&#x672C;&#x3002;
+</li></ul>
 <blockquote><p>TODO</p></blockquote>
                                 
                                 </section>
@@ -369,7 +457,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"1、简介","level":"1.1","depth":1,"next":{"title":"2、词汇","level":"1.2","depth":1,"path":"Glossary.md","ref":"Glossary.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["theme-api","livereload"],"pluginsConfig":{"theme-api":{"languages":[{"lang":"js","name":"JavaScript","default":true},{"lang":"go","name":"Go"}],"split":true,"theme":"light"},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2016-09-21T12:11:53.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-09-24T07:03:06.782Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"1、简介","level":"1.1","depth":1,"next":{"title":"2、词汇","level":"1.2","depth":1,"path":"Glossary.md","ref":"Glossary.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["theme-api","livereload"],"pluginsConfig":{"theme-api":{"languages":[{"lang":"js","name":"JavaScript","default":true},{"lang":"go","name":"Go"}],"split":true,"theme":"light"},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"README.md","mtime":"2016-09-28T12:44:40.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2016-09-28T12:44:49.271Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
