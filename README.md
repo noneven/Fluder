@@ -10,6 +10,19 @@ A unidirectional data flow tool based on flux.
 [![npm dm](https://img.shields.io/npm/dm/Fluder.svg?style=flat-square)](https://www.npmjs.com/package/fluder)
 [![LICENSE](https://img.shields.io/npm/l/fluder.svg)](https://www.npmjs.com/package/fluder)
 
+主要解决的痛点如下:
+
+* 1、Redux对没有函数式编程经验的人来说不好理解，很难用好，
+* 2、Redux的树形Store需要做太多的shouldComponentUpdate，
+* 3、Redux推崇state不可变
+
+```javascript
+state = Object.assign({}, state)
+state.count++
+return state
+```
+  使得Redux在Vue上使用很尴尬(vm对state的监听失效)，
+* 4、其他线性Store的Flux实现中 Action => Store触发change更新view的成本高，Fluder用id把Action-Store关联起来提高Action到更新View的成本。
 
 ## 安装
 
