@@ -1,6 +1,6 @@
 # Fluder
 
-A unidirectional data flow tool based on flux.
+[Unidirectional DataFlow State Management](https://coderwin.github.io/Fluder)
 
 更加轻量，更加便捷，更加高效。[没有框架限制/React、Vue完美使用]
 
