@@ -12,8 +12,7 @@
 
 ## 10秒了解Fluder
 
-<div style="display:flex;flex-direction:row">
-<div style="flex:1">
+
 * actionCreator
 
 ```javascript
@@ -24,9 +23,6 @@ export default actionCreate({
     })
 })
 ```
-</div>
-
-<div style="flex:1">
 * storeCreator
 
 ```javascript
@@ -45,8 +41,6 @@ function push(item){
   items.push(item)
 }
 ```
-</div>
-</div>
 
 * React Component
 
