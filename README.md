@@ -1,6 +1,6 @@
 # Fluder
 
-A unidirectional data flow tool based on flux.
+[Unidirectional DataFlow State Management](https://coderwin.github.io/Fluder)
 
 更加轻量，更加便捷，更加高效。[没有框架限制/React、Vue完美使用]
 
@@ -10,6 +10,96 @@ A unidirectional data flow tool based on flux.
 [![npm dm](https://img.shields.io/npm/dm/Fluder.svg?style=flat-square)](https://www.npmjs.com/package/fluder)
 [![LICENSE](https://img.shields.io/npm/l/fluder.svg)](https://www.npmjs.com/package/fluder)
 
+## 10秒了解Fluder
+
+<table>
+<tr>
+<td>
+actionCreator
+<pre>
+export actionCreate({
+    addTodo:(item)=>({
+      type: constants.ADD_TODO,
+      value: item
+    })
+})
+</pre>
+</td>
+<td>
+storeCreator
+<pre>
+let items = [];
+export storeCreate(todoAction, {
+  getAll: function(){
+    return items
+  }
+},{
+  [constants.ADD_TODO]: function(payload){
+    push(payload.value)
+    return items
+  }
+})
+function push(item){
+  items.push(item)
+}
+</pre>
+</td>
+<td>
+React Component
+<pre>
+componentDidMount(){
+  todoStore.addChangeListener(()=>{
+    this.setState({
+      items: todoStore.getAll()
+    })
+  })
+}
+addTodo(e){
+  todoAction.addTodo({
+    text: e.target.value,
+    done: false
+  });
+}
+</pre>
+</td>
+
+<td>
+Vue Component
+<pre>
+methods:{
+  addTodo(e){
+    todoAction.addTodo({
+      text: e.target.value,
+      done: false
+    });
+  }
+},
+created (){
+  todoStore.addChangeListener(()=>{
+    this.setState({
+      items: todoStore.getAll()
+    })
+  })
+}
+</pre>
+</td>
+</tr>
+
+</table>
+
+主要解决的痛点如下:
+
+* 1、Redux对没有函数式编程经验的人来说不好理解，很难用好，
+* 2、Redux的树形Store需要做太多的shouldComponentUpdate，
+* 3、Redux推崇state不可变
+
+```javascript
+state = Object.assign({}, state)
+state.count++
+return state
+```
+  使得Redux在Vue上使用很尴尬(vm对state的监听失效)，
+* 4、其他线性Store的Flux实现中 Action => Store触发change更新view的成本高，Fluder用id把Action-Store关联起来提高Action到更新View的成本。
 
 ## 安装
 
