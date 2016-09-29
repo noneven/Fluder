@@ -15,7 +15,7 @@
 <table>
 <tr>
 <td>
-actionCreator
+todoAction
 <pre>
 export actionCreate({
     addTodo:(item)=>({
@@ -26,7 +26,7 @@ export actionCreate({
 </pre>
 </td>
 <td>
-storeCreator
+todoStore
 <pre>
 let items = [];
 export storeCreate(todoAction, {
@@ -34,7 +34,7 @@ export storeCreate(todoAction, {
     return items
   }
 },{
-  [constants.ADD_TODO]: function(payload){
+  \[constants.ADD_TODO\]: function(payload){
     push(payload.value)
     return items
   }
