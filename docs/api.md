@@ -22,7 +22,7 @@ export storeCreate(todoAction, {
     return items
   }
 },{
-  [constants.ADD_TODO]: function(payload){
+  \[constants.ADD_TODO\]: function(payload){
     push(payload.value)
     return items
   }
