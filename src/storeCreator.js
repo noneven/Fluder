@@ -8,11 +8,12 @@ var unique = require('./tools').unique
 var getType = require('./tools').getType
   /**
    * create store[export API]
-   * @param  {string} actions  store need the actions to change
+   
+   * @param  {string} actions  - store need the actions to change
    * as actionStoreCreate entering, the actions is storeId which is a string.
-   * @param  {object} method   store state getter
-   * @param  {object} handlers action sending
-   * @return {object}          return a store instance
+   * @param  {object} method   - store state getter
+   * @param  {object} handlers - action sending
+   * @return {object}          - return a store instance
    */
 function storeCreate (actions, method, handlers) {
   var storeId = typeof actions === 'object'

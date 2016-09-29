@@ -21,7 +21,7 @@ var catchError = Tool.catchError
 
 /**
  * constructor
- * @return {object} the Fluder object
+ * @return {object} - the Fluder object
  */
 function Fluder () {
   /**
@@ -58,8 +58,8 @@ Fluder.prototype._init = function () {
  * action invoke store change
  * this payload contain the storeId、the action payload and the store
  *
- * @param  {object} payload storeId/payload/store
- * @return {void}           return null
+ * @param  {object} payload - storeId/payload/store
+ * @return {void}           - return null
  */
 Fluder.prototype._invoke = function (payload) {
   /**
@@ -129,9 +129,9 @@ Fluder.prototype._endDispatch = function () {
 
 /**
  * store and handler register
- * @param  {string} storeId store/action unique
- * @param  {object} storeHandler  store/handler collection
- * @return {void}   return null
+ * @param  {string} storeId - store/action unique
+ * @param  {object} storeHandler  - store/handler collection
+ * @return {void}   - return null
  */
 Fluder.prototype.register = function (storeId, storeHandler) {
   this._registers[storeId] = storeHandler
@@ -139,8 +139,8 @@ Fluder.prototype.register = function (storeId, storeHandler) {
 
 /**
  * middleware queue
- * @param  {function} middleware  middleware handle function
- * @return {void}     return null
+ * @param  {function} middleware - middleware handle function
+ * @return {void}     - return null
  */
 Fluder.prototype.enqueue = function (middleware) {
   this._middleware.enqueue(middleware)
@@ -148,9 +148,9 @@ Fluder.prototype.enqueue = function (middleware) {
 
 /**
  * dispatch action
- * @param  {string} storeId store/action unique
- * @param  {object} action  action data
- * @return {void}           return null
+ * @param  {string} storeId - store/action unique
+ * @param  {object} action  - action data
+ * @return {void}           - return null
  */
 Fluder.prototype.dispatch = function (storeId, payload) {
   /**

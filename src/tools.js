@@ -10,7 +10,8 @@ function unique () {
 
 /**
  * middleware can be realize
- * @param  {error} e error object
+ *
+ * @param  {error} e - error object
  */
 function catchError (e) {
   var start = '\n\n@@Fluder/Start\n'
@@ -26,8 +27,9 @@ function catchError (e) {
 
 /**
  * get data object
- * @param  {*} p enter data
- * @return {string} return type
+ *
+ * @param  {*} p - enter data
+ * @return {string} - return type
  */
 function getType (p) {
   var tostring = Object.prototype.toString.call(p)

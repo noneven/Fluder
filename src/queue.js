@@ -1,17 +1,17 @@
 /**
- * 队列
+ * queue
  * @type {Array}
  */
 var queue = []
 
 /**
- * 队列备份
+ * queue backup
  * @type {Array}
  */
 var _queue = []
 
 /**
- * 队列类
+ * queue class
  */
 function Queue (loop) {
   this.loop = (typeof loop === 'undefined') ? true : loop
@@ -19,7 +19,7 @@ function Queue (loop) {
 
 /**
  * enter queue
- * @param {Function} middleware task
+ * @param {Function} - middleware task
  */
 Queue.prototype.enqueue = function (task) {
   queue.push(task)
@@ -29,8 +29,9 @@ Queue.prototype.enqueue = function (task) {
 
 /**
  * execute the handle function
- * @param {Object} not required, in middleware handle function can be empty
- * @param {Array}  not required, it's used to replace the middleware task
+ *
+ * @param {Object} - not required, in middleware handle function can be empty
+ * @param {Array}  - not required, it's used to replace the middleware task
  */
 Queue.prototype.execute = function (data, tasks) {
   /**
@@ -62,8 +63,9 @@ Queue.prototype.execute = function (data, tasks) {
 
 /**
  * middleware task execute achieved will be execute the callback
- * @param  {Function} fn
- * @return {object}   return the queue instance，mock Promise
+ *
+ * @param  {Function} - fn
+ * @return {object}   - return the queue instance，mock Promise
  */
 Queue.prototype.after = function (fn) {
   this.tasksAchieved = fn
