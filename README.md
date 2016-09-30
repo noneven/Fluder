@@ -17,7 +17,7 @@
 <td>
 todoAction
 <pre>
-export default factionCreate({
+export default actionCreate({
     addTodo:(item)=>({
       type: constants.ADD_TODO,
       value: item
