@@ -72,6 +72,14 @@ describe('Fluder process tests\n', function () {
     }).to.throw(/action type does not exist/)
   })
 
+  it('Action return can be a function', function () {
+    expect(function () {
+      formAction.functionTypeAction(function(){
+        //console.log('function')
+      })
+    }).to.not.throw(Error)
+  })
+
   it('Middleware should read storeId/store/payload', function () {
     middleware.applyMiddleware(function (data, next) {
       expect(data).to.have.property('store')

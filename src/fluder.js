@@ -176,7 +176,7 @@ Fluder.prototype.dispatch = function (storeId, payload) {
    * actionType in action required，because the actionType
    * will be connect the store handler
    */
-  if (typeof payload === 'function' && !payload.type) {
+  if (typeof payload === 'object' && !payload.type) {
     throw new Error('action type does not exist in \n' + JSON.stringify(payload, null, 2))
   }
 

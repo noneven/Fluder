@@ -13,5 +13,6 @@ module.exports = actionCreate({
   }),
   noTypeAction: (val) => ({
     value: val
-  })
+  }),
+  functionTypeAction: fn => fn
 })
