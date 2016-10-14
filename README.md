@@ -4,7 +4,7 @@
 
 更加轻量，更加便捷，更加高效。[没有框架限制/React、Vue完美使用]
 
-[![Build Status](https://travis-ci.org/coderwin/Fluder.svrg?branch=master)](https://travis-ci.org/coderwin/Fluder)
+[![Build Status](https://travis-ci.org/coderwin/Fluder.svg?branch=master)](https://travis-ci.org/coderwin/Fluder)
 [![Coverage Status](https://coveralls.io/repos/github/coderwin/Fluder/badge.svg?branch=master)](https://coveralls.io/github/coderwin/Fluder?branch=master)
 [![npm ver](https://img.shields.io/npm/v/fluder.svg?style=flat)](https://www.npmjs.com/package/fluder)
 [![npm dm](https://img.shields.io/npm/dm/Fluder.svg?style=flat-square)](https://www.npmjs.com/package/fluder)
