@@ -76,9 +76,7 @@ methods:{
 },
 created (){
   todoStore.addChangeListener(()=>{
-    this.setState({
-      items: todoStore.getAll()
-    })
+    this.items = todoStore.getAll()
   })
 }
 </pre>
