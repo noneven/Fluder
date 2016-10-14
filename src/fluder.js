@@ -170,8 +170,6 @@ Fluder.prototype.dispatch = function (storeId, payload) {
     throw Error(this._dispatchStack.join(' -> ') + storeId + ' : action __invoke__ to a circle!')
   }
 
-  this._startDispatch(storeId)
-
   /**
    * actionType in action required，because the actionType
    * will be connect the store handler
@@ -179,6 +177,8 @@ Fluder.prototype.dispatch = function (storeId, payload) {
   if (typeof payload === 'object' && !payload.type) {
     throw new Error('action type does not exist in \n' + JSON.stringify(payload, null, 2))
   }
+  
+  this._startDispatch(storeId)
 
   try {
     /**
