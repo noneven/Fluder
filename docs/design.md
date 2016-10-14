@@ -2,4 +2,4 @@
 
 > TODO
 
-![Fluder Design](./imgs/fluder-design.png)
+![fluder-design](../design/fluder-design.png)
