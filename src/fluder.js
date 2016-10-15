@@ -109,6 +109,39 @@ Fluder.prototype._invoke = function (payload) {
 }
 
 /**
+ * check action's paload and storeId
+ * @param  {string} storeId - store/action unique
+ * @param  {object} payload - actionType and actionValue
+ * @return {void}   - return null
+ */
+Fluder.prototype._beforeDispatch = function(storeId, payload){
+  /**
+   * in current action invoke the store change sending the same action
+   * which bring about the iteration of A-A, it will mack stackoverflow
+   */
+  if (this._currentDispatch === storeId) {
+    throw Error('action ' + (payload.value && payload.value.actionType) + ' __invoke__ myself!')
+  }
+
+  /**
+   * in current action invoke the store change
+   * sending the action in dispatch stack which bring about
+   * the iteration of A-B-A/A-B-C-A, it will also mack stackoverflow
+   */
+  if (this._dispatchStack.indexOf(storeId) !== -1) {
+    throw Error(this._dispatchStack.join(' -> ') + storeId + ' : action __invoke__ to a circle!')
+  }
+
+  /**
+   * actionType in action required，because the actionType
+   * will be connect the store handler
+   */
+  if (typeof payload === 'object' && !payload.type) {
+    throw new Error('action type does not exist in \n' + JSON.stringify(payload, null, 2))
+  }
+}
+
+/**
  * start dispatch to update the stack[push storeId]
  * and record the current dispatch storeId
  */
@@ -154,30 +187,18 @@ Fluder.prototype.enqueue = function (middleware) {
  */
 Fluder.prototype.dispatch = function (storeId, payload) {
   /**
-   * in current action invoke the store change sending the same action
-   * which bring about the iteration of A-A, it will mack stackoverflow
+   * check action's paload and storeId
    */
-  if (this._currentDispatch === storeId) {
-    throw Error('action ' + (payload.value && payload.value.actionType) + ' __invoke__ myself!')
-  }
+  this._beforeDispatch(storeId, payload)
 
   /**
-   * in current action invoke the store change
-   * sending the action in dispatch stack which bring about
-   * the iteration of A-B-A/A-B-C-A, it will also mack stackoverflow
+   * as action is a function, (Fluder-thunk)
+   * return execute function's value
    */
-  if (this._dispatchStack.indexOf(storeId) !== -1) {
-    throw Error(this._dispatchStack.join(' -> ') + storeId + ' : action __invoke__ to a circle!')
+  if(typeof payload === 'function'){
+    return payload()
   }
 
-  /**
-   * actionType in action required，because the actionType
-   * will be connect the store handler
-   */
-  if (typeof payload === 'object' && !payload.type) {
-    throw new Error('action type does not exist in \n' + JSON.stringify(payload, null, 2))
-  }
-  
   this._startDispatch(storeId)
 
   try {
