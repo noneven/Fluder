@@ -97,7 +97,7 @@ Fluder.prototype._invoke = function (payload) {
      */
 
     var result
-    // var _result = handler.call(store, payload)
+    // var result = handler.call(store, payload)
     /**
      * the result is not required, only set store state
      * payload to store change callback to render optimization and local rending
